@@ -8,9 +8,8 @@ const style = function (x, y) {
     position: 'absolute',
     left: x,
     top: y,
-    WebkitTransition: 'all .5s, top .5s',
-    transition: 'all .5s, top .5s',
-    'transitionTimingFunction': 'ease-out',
+    WebkitTransition: 'all .5s ease-out',
+    transition: 'all .5s ease-out',
     overflow: 'visible',
     padding: 0,
     margin: 0
@@ -44,13 +43,13 @@ class App extends Component {
     this.state = {
       location: Location(0, 0),
       title: '',
-      size: 200
+      size: 0
     }
   }
 
   componentDidMount() {
     const socket = openSocket();
-    socket.on('connected', data => this.initialize(data));
+    socket.on('connected', this.initialize);
 
     Observable.fromEvent(window, 'mousemove')
       .sampleTime(100)
@@ -62,9 +61,7 @@ class App extends Component {
 
   updatePosition = e => {
     this.setState(prevState => ({
-      location: Location(e.clientX, e.clientY),
-      title: prevState.title,
-      size: prevState.size
+      location: Location(e.clientX, e.clientY)
     }));
   };
 
@@ -78,8 +75,6 @@ class App extends Component {
 
   increaseSize = () => {
     this.setState(prevState => ({
-      location: prevState.location,
-      title: prevState.title,
       size: prevState.size + 20
     }))
   };
