@@ -4,7 +4,7 @@ const io = require('socket.io')(http);
 
 io.on('connection', socket => {
   console.log('a user connected');
-  socket.emit('connected', {
+  socket.emit('initialize', {
     location: {x: -100, y: -100},
     title: 'Blobber2',
     size: 100

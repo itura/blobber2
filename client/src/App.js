@@ -1,39 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
-import {Observable} from 'rxjs';
-import openSocket from 'socket.io-client';
-
-const style = function (x, y) {
-  return {
-    position: 'absolute',
-    left: x,
-    top: y,
-    WebkitTransition: 'all .5s ease-out',
-    transition: 'all .5s ease-out',
-    overflow: 'visible',
-    padding: 0,
-    margin: 0
-  }
-};
-
-const Location = (x, y) => ({x, y});
-
-const Blob = ({location, size}) => {
-  const strokeWidth = 5;
-  const baseRadius = (size / 2);
-  const innerRadius = baseRadius - strokeWidth;
-  const outerRadius = baseRadius + strokeWidth;
-  const centerX = location.x - outerRadius;
-  const centerY = location.y - outerRadius;
-
-  return (
-    <div style={style(centerX, centerY)}>
-      <svg width={size} height={size}>
-        <circle cx={baseRadius} cy={baseRadius} r={innerRadius} stroke="navy" strokeWidth={strokeWidth} fill="blue"/>
-      </svg>
-    </div>
-  )
-};
+import {GameState} from './eventSources/gameState';
+import {MainPlayer} from './blobs/mainPlayer';
 
 class App extends Component {
 
@@ -41,49 +9,26 @@ class App extends Component {
     super();
 
     this.state = {
-      location: Location(0, 0),
-      title: '',
-      size: 0
+      title: ''
     }
   }
 
   componentDidMount() {
-    const socket = openSocket();
-    socket.on('connected', this.initialize);
-
-    Observable.fromEvent(window, 'mousemove')
-      .sampleTime(100)
-      .subscribe(this.updatePosition);
-
-    Observable.fromEvent(window, 'mousedown')
-      .subscribe(this.increaseSize);
+    GameState.initialize().subscribe(this.initialize);
   }
-
-  updatePosition = e => {
-    this.setState(prevState => ({
-      location: Location(e.clientX, e.clientY)
-    }));
-  };
 
   initialize = data => {
     this.setState(prevState => ({
-      location: data.location,
-      title: data.title,
-      size: data.size
+      title: data.title
     }));
   };
 
-  increaseSize = () => {
-    this.setState(prevState => ({
-      size: prevState.size + 20
-    }))
-  };
 
   render() {
     return (
       <div>
         <h1>{this.state.title}</h1>
-        <Blob location={this.state.location} size={this.state.size}/>
+        <MainPlayer/>
       </div>
     );
   }
