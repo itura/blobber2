@@ -8,10 +8,32 @@ const style = function (x, y) {
     position: 'absolute',
     left: x,
     top: y,
-    WebkitTransition: 'left .5s, top .5s',
-    transition: 'left .5s, top .5s',
-    'transitionTimingFunction': 'ease-out'
+    WebkitTransition: 'all .5s, top .5s',
+    transition: 'all .5s, top .5s',
+    'transitionTimingFunction': 'ease-out',
+    overflow: 'visible',
+    padding: 0,
+    margin: 0
   }
+};
+
+const Location = (x, y) => ({x, y});
+
+const Blob = ({location, size}) => {
+  const strokeWidth = 5;
+  const baseRadius = (size / 2);
+  const innerRadius = baseRadius - strokeWidth;
+  const outerRadius = baseRadius + strokeWidth;
+  const centerX = location.x - outerRadius;
+  const centerY = location.y - outerRadius;
+
+  return (
+    <div style={style(centerX, centerY)}>
+      <svg width={size} height={size}>
+        <circle cx={baseRadius} cy={baseRadius} r={innerRadius} stroke="navy" strokeWidth={strokeWidth} fill="blue"/>
+      </svg>
+    </div>
+  )
 };
 
 class App extends Component {
@@ -20,41 +42,53 @@ class App extends Component {
     super();
 
     this.state = {
-      style: {},
-      title: ''
+      location: Location(0, 0),
+      title: '',
+      size: 200
     }
   }
 
   componentDidMount() {
     const socket = openSocket();
-    socket.on('connected', data => this.updateTitle(data.username));
+    socket.on('connected', data => this.initialize(data));
 
     Observable.fromEvent(window, 'mousemove')
       .sampleTime(100)
       .subscribe(this.updatePosition);
 
     Observable.fromEvent(window, 'mousedown')
-      .subscribe(() => socket.emit('click'));
+      .subscribe(this.increaseSize);
   }
 
   updatePosition = e => {
     this.setState(prevState => ({
-      style: style(e.clientX, e.clientY),
-      title: prevState.title
+      location: Location(e.clientX, e.clientY),
+      title: prevState.title,
+      size: prevState.size
     }));
   };
 
-  updateTitle = title => {
+  initialize = data => {
     this.setState(prevState => ({
-      style: prevState.style,
-      title: title
+      location: data.location,
+      title: data.title,
+      size: data.size
     }));
+  };
+
+  increaseSize = () => {
+    this.setState(prevState => ({
+      location: prevState.location,
+      title: prevState.title,
+      size: prevState.size + 20
+    }))
   };
 
   render() {
     return (
-      <div style={this.state.style}>
-        {this.state.title}
+      <div>
+        <h1>{this.state.title}</h1>
+        <Blob location={this.state.location} size={this.state.size}/>
       </div>
     );
   }

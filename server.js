@@ -4,7 +4,11 @@ const io = require('socket.io')(http);
 
 io.on('connection', socket => {
   console.log('a user connected');
-  socket.emit('connected', {username: 'player'});
+  socket.emit('connected', {
+    location: {x: -100, y: -100},
+    title: 'Blobber2',
+    size: 100
+  });
 
   socket.on('click', data => {
     console.log('click!');
