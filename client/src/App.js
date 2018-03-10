@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
 import {Observable} from 'rxjs';
+import openSocket from 'socket.io-client';
 
 const style = function (x, y) {
   return {
@@ -25,32 +26,29 @@ class App extends Component {
   }
 
   componentDidMount() {
+    const socket = openSocket();
+    socket.on('connected', data => this.updateTitle(data.username));
+
     Observable.fromEvent(window, 'mousemove')
       .sampleTime(100)
       .subscribe(this.updatePosition);
 
     Observable.fromEvent(window, 'mousedown')
-      .subscribe(this.updateTitle);
-
-    this.updateTitle();
+      .subscribe(() => socket.emit('click'));
   }
 
   updatePosition = e => {
-    this.setState((prevState, props) => ({
+    this.setState(prevState => ({
       style: style(e.clientX, e.clientY),
       title: prevState.title
     }));
   };
 
-  updateTitle = () => {
-    fetch('/api/hello')
-      .then(response => response.json())
-      .then(responseBody => {
-        this.setState((prevState, props) => ({
-          style: prevState.style,
-          title: responseBody.express
-        }));
-      })
+  updateTitle = title => {
+    this.setState(prevState => ({
+      style: prevState.style,
+      title: title
+    }));
   };
 
   render() {

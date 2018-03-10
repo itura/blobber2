@@ -1,12 +1,16 @@
-const express = require('express');
+const app = require('express')();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
-const app = express();
-const port = process.env.PORT || 5000;
+io.on('connection', socket => {
+  console.log('a user connected');
+  socket.emit('connected', {username: 'player'});
 
-let excite = '';
-app.get('/api/hello', (req, res) => {
-  res.send({express: 'Hello From Express' + excite});
-  excite += '!';
+  socket.on('click', data => {
+    console.log('click!');
+  });
 });
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+http.listen(5000, function () {
+  console.log('listening on *:5000');
+});

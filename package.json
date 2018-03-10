@@ -5,15 +5,14 @@
   "main": "server.js",
   "author": "austin.w.garrard@gmail.com",
   "license": "MIT",
-
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "socket.io": "^2.0.4"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",
     "nodemon": "^1.17.1"
   },
-
   "scripts": {
     "client": "cd client && yarn start",
     "server": "node_modules/nodemon/bin/nodemon.js server.js",
