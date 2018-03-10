@@ -1,4 +1,4 @@
-# Blobber 2
+# Blobber 2 client
 
 ```bash
 yarn install
