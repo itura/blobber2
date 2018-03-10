@@ -1,0 +1,22 @@
+{
+  "name": "blobber2",
+  "version": "1.0.0",
+  "description": "Sequel to the smash hit blobber",
+  "main": "server.js",
+  "author": "austin.w.garrard@gmail.com",
+  "license": "MIT",
+
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "concurrently": "^3.5.1",
+    "nodemon": "^1.17.1"
+  },
+
+  "scripts": {
+    "client": "cd client && yarn start",
+    "server": "node_modules/nodemon/bin/nodemon.js server.js",
+    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\""
+  }
+}

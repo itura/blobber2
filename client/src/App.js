@@ -19,7 +19,8 @@ class App extends Component {
     super();
 
     this.state = {
-      style: {}
+      style: {},
+      title: ''
     }
   }
 
@@ -28,15 +29,25 @@ class App extends Component {
       .sampleTime(100)
       .subscribe(e => {
         this.setState((prevState, props) => ({
-          style: style(e.clientX, e.clientY)
+          style: style(e.clientX, e.clientY),
+          title: prevState.title
         }));
       });
+
+    fetch('/api/hello')
+      .then(response => response.json())
+      .then(responseBody => {
+        this.setState((prevState, props) => ({
+          style: prevState.style,
+          title: responseBody.express
+        }));
+      })
   }
 
   render() {
     return (
       <div style={this.state.style}>
-        Hello
+        {this.state.title}
       </div>
     );
   }
