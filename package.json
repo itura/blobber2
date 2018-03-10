@@ -1,0 +1,20 @@
+{
+  "name": "rodel",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "immutable": "latest",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "rxjs": "^5.5.6"
+  },
+  "devDependencies": {
+    "react-scripts": "1.0.17"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
