@@ -1,7 +1,7 @@
 import openSocket from 'socket.io-client';
 import {Subject} from 'rxjs';
 
-function Event(type, data) {
+export function Event(type, data) {
   return {type, data};
 }
 
@@ -14,27 +14,26 @@ function createGameState() {
     socket.on(type, data => bus.next(Event(type, data)));
   });
 
-  function filterByType(bus, type) {
+  function filterBy(type) {
     return bus
       .filter(event => event.type === type)
       .map(event => event.data);
   }
 
   return {
-    get: {
-      initialize() {
-        return filterByType(bus, 'initialize').do(event => console.log(event));
-      },
 
-      move() {
-        return filterByType(bus, 'move');
-      }
+    getInitializeEvents() {
+      return filterBy('initialize');
     },
 
-    notify: {
-      move(id, location) {
-        socket.emit('move', {id, location})
-      }
+    getMoveEvents(id) {
+      return filterBy('move')
+        .filter(event => event.id === id)
+        .map(event => event.location)
+    },
+
+    notifyOfMoveEvent(id, location) {
+      socket.emit('move', {id, location});
     }
   };
 }

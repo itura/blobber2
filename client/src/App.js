@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './App.css';
 import {GameState} from './eventSources/gameState';
 import {MainPlayer} from './blobs/mainPlayer';
-import {Blob} from './blobs/blob';
+import {SmolBlob} from './blobs/blob';
 
 class App extends Component {
 
@@ -16,7 +16,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    GameState.get.initialize().subscribe(this.initialize);
+    GameState.getInitializeEvents().subscribe(this.initialize);
   }
 
   initialize = data => {
@@ -28,7 +28,10 @@ class App extends Component {
 
 
   render() {
-    const blobComponents = this.state.blobs.map(blob => (<Blob key={blob.id} location={blob.location} size={blob.size}/>))
+    const blobComponents = this.state.blobs.map(blob => (
+      <SmolBlob key={blob.id} id={blob.id} location={blob.location} size={blob.size}/>
+    ));
+
     return (
       <div>
         <h1>{this.state.title}</h1>

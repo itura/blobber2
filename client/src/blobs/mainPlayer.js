@@ -15,8 +15,8 @@ export class MainPlayer extends Component {
   }
 
   componentDidMount() {
-    GameState.get.initialize().subscribe(this.initialize);
-    UserInput.mouseMove().subscribe(this.updatePosition);
+    GameState.getInitializeEvents().subscribe(this.initialize);
+    UserInput.mouseMove().subscribe(this.follow);
     UserInput.mouseDown().subscribe(this.increaseSize);
   }
 
@@ -28,9 +28,9 @@ export class MainPlayer extends Component {
     }));
   };
 
-  updatePosition = newPosition => {
+  follow = newPosition => {
     this.setState(prevState => ({location: newPosition}));
-    GameState.notify.move(this.state.id, newPosition);
+    GameState.notifyOfMoveEvent(this.state.id, newPosition);
   };
 
   increaseSize = () => {
