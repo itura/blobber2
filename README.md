@@ -1,8 +1,11 @@
    # Blobber 2
 
    ```bash
+   cd ./client
    yarn install
 
+   cd ..
+   yarn install
    yarn dev
    ```
 
