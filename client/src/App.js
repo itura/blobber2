@@ -3,6 +3,7 @@ import './App.css';
 import {GameState} from './eventSources/gameState';
 import {MainPlayer} from './blobs/mainPlayer';
 import {SmolBlob} from './blobs/blob';
+import {Observable} from 'rxjs';
 
 class App extends Component {
 
@@ -11,19 +12,44 @@ class App extends Component {
 
     this.state = {
       title: '',
-      blobs: []
+      blobs: [],
+      mainPlayerId: 0
     }
   }
 
   componentDidMount() {
-    GameState.getInitializeEvents().subscribe(this.initialize);
+    this.subscriptions = [
+      GameState.get('initialize').subscribe(this.initialize),
+      GameState.get('newPlayer').subscribe(this.addPlayer),
+
+      // debug monitoring
+      Observable.timer(1000, 2000)
+        .subscribe(value => console.log('blobs:', this.state.blobs.length, this.state.blobs.map(blob => blob.id)))
+    ];
+  }
+
+  componentWillUnmount() {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   initialize = data => {
     this.setState(prevState => ({
       title: data.title,
-      blobs: data.blobs
+      blobs: data.blobs.filter(blob => blob.id !== data.id),
+      mainPlayerId: data.id
     }));
+  };
+
+  addPlayer = player => {
+    this.setState(prevState => {
+      let blobs = prevState.blobs;
+
+      if (player.id !== this.state.mainPlayerId) {
+        blobs.push(player);
+      }
+
+      return {blobs};
+    })
   };
 
 

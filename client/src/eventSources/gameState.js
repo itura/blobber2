@@ -6,10 +6,13 @@ export function Event(type, data) {
 }
 
 function createGameState() {
-  const bus = new Subject();
-  const socket = openSocket();
+  const bus = new Subject().share();
+  const socket = openSocket('/', {
+    reconnection: false
+  });
+  console.log('hi');
 
-  const eventTypes = ['initialize', 'move'];
+  const eventTypes = ['initialize', 'move', 'newPlayer'];
   eventTypes.forEach(type => {
     socket.on(type, data => bus.next(Event(type, data)));
   });
@@ -21,15 +24,14 @@ function createGameState() {
   }
 
   return {
-
-    getInitializeEvents() {
-      return filterBy('initialize');
-    },
-
     getMoveEvents(id) {
       return filterBy('move')
         .filter(event => event.id === id)
         .map(event => event.location)
+    },
+
+    get(type) {
+      return filterBy(type);
     },
 
     notifyOfMoveEvent(id, location) {

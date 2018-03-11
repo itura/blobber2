@@ -15,7 +15,7 @@ export class MainPlayer extends Component {
   }
 
   componentDidMount() {
-    GameState.getInitializeEvents().subscribe(this.initialize);
+    GameState.get('initialize').subscribe(this.initialize);
     UserInput.mouseMove().subscribe(this.follow);
     UserInput.mouseDown().subscribe(this.increaseSize);
   }
