@@ -8,28 +8,29 @@ export class MainPlayer extends Component {
     super();
 
     this.state = {
+      id: 0,
       location: Location.create(),
       size: 0
     }
   }
 
   componentDidMount() {
-    GameState.initialize().subscribe(this.initialize);
+    GameState.get.initialize().subscribe(this.initialize);
     UserInput.mouseMove().subscribe(this.updatePosition);
     UserInput.mouseDown().subscribe(this.increaseSize);
   }
 
   initialize = data => {
     this.setState(prevState => ({
+      id: data.id,
       location: data.location,
       size: data.size
     }));
   };
 
-  updatePosition = event => {
-    this.setState(prevState => ({
-      location: Location.create(event.clientX, event.clientY)
-    }));
+  updatePosition = newPosition => {
+    this.setState(prevState => ({location: newPosition}));
+    GameState.notify.move(this.state.id, newPosition);
   };
 
   increaseSize = () => {
