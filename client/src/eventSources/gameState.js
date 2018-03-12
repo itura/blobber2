@@ -12,7 +12,7 @@ function createGameState() {
   });
   console.log('hi');
 
-  const eventTypes = ['initialize', 'move', 'newPlayer'];
+  const eventTypes = ['initialize', 'move', 'newPlayer', 'grow'];
   eventTypes.forEach(type => {
     socket.on(type, data => bus.next(Event(type, data)));
   });
@@ -24,18 +24,22 @@ function createGameState() {
   }
 
   return {
-    getMoveEvents(id) {
-      return filterBy('move')
-        .filter(event => event.id === id)
-        .map(event => event.location)
-    },
+    get(type, id = null) {
+      let source = filterBy(type);
 
-    get(type) {
-      return filterBy(type);
+      if (id) {
+        source = source.filter(event => event.id === id);
+      }
+
+      return source;
     },
 
     notifyOfMoveEvent(id, location) {
       socket.emit('move', {id, location});
+    },
+
+    notify(type, data) {
+      socket.emit(type, data);
     }
   };
 }

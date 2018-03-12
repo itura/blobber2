@@ -1,9 +1,9 @@
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-let rs = require('rxjs');
-const Observable = rs.Observable;
-const Subject = rs.Subject;
+let rx = require('rxjs');
+const Observable = rx.Observable;
+const Subject = rx.Subject;
 
 // helpers
 function createLocation(x, y) {
@@ -15,30 +15,26 @@ function createLocation(x, y) {
   };
 }
 
-
-// event bus
-function createEventBus(source) {
+function createDigest() {
+  let events = [];
   return {
-    rebroadcast(type) {
-      this.get(type).subscribe(event => this.notify(type, event));
+    add(...event) {
+      events.push(event);
     },
-    notify(type, data) {
-      io.sockets.emit(type, data);
-    },
-    get(type) {
-      return source
-        .filter(event => event.type === type)
-        .map(event => event.data);
+
+    send() {
+      events.forEach(event => io.sockets.emit(...event));
+      events = [];
     }
   }
 }
+const digest = createDigest();
+Observable.timer(0, 100).subscribe(value => {
+  digest.send();
+});
 
-const eventSource = new Subject();
-const eventBus = createEventBus(eventSource);
-const eventTypes = ['initialize', 'move'];
 
-// initial game state
-const blobs = [];
+
 let newId = 0;
 function createBlob(x, y, size) {
   newId += 1;
@@ -47,13 +43,56 @@ function createBlob(x, y, size) {
   return blob;
 }
 
+
+// event bus
+function createEventBus(source) {
+  return {
+    get(type) {
+      return source
+        .filter(event => event.type === type)
+        .map(event => event.data);
+    }
+  }
+}
+
+let blobs = [];
+const eventSource = new Subject();
+const eventBus = createEventBus(eventSource);
+const eventTypes = ['initialize', 'move', 'newPlayer', 'grow'];
+
+// eventBus.rebroadcast('newPlayer');
+// eventBus.rebroadcast('move');
+// eventBus.rebroadcast('grow');
+
+// blob digest - sends a summary of the current state of all the blobs
+
+// initial game state
 [1, 2, 3, 4, 5].forEach((_, index) => {
-  const blob = createBlob(100 * index, 100 * index, 20)
+  const blob = createBlob(100 * index, 100 * index, 20);
   Observable.timer(1000, 2000)
     .map(value => ({id: blob.id, location: blob.location.changeBy(value * 10, value * 10)}))
     .subscribe(data => {
-      eventBus.notify('move', data)
+      blob.location = data.location;
+      blob.size += 10;
+      digest.add('move', data);
+      digest.add('grow', {id: blob.id, size: blob.size + 10});
     });
+});
+
+eventBus.get('move').subscribe(data => {
+  const blob = blobs.find(blob => blob.id === data.id);
+  if (blob) {
+    blob.location = data.location;
+    digest.add('move', data);
+  }
+});
+
+eventBus.get('grow').subscribe(data => {
+  const blob = blobs.find(blob => blob.id === data.id);
+  if (blob) {
+    blob.size += 10;
+    digest.add('grow', {id: blob.id, size: blob.size});
+  }
 });
 
 // debug monitoring
@@ -77,12 +116,9 @@ io.on('connection', socket => {
   eventTypes.forEach(type => socket.on(type, data => eventSource.next({type, data})));
 
   // let the world know what just happened!
-  eventBus.notify('newPlayer', player)
+  digest.add('newPlayer', player)
 });
 
 http.listen(5000, function () {
   console.log('listening on *:5000');
 });
-
-eventBus.rebroadcast('newPlayer');
-eventBus.rebroadcast('move');

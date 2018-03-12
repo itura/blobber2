@@ -16,8 +16,6 @@ export class MainPlayer extends Component {
 
   componentDidMount() {
     GameState.get('initialize').subscribe(this.initialize);
-    UserInput.mouseMove().subscribe(this.follow);
-    UserInput.mouseDown().subscribe(this.increaseSize);
   }
 
   initialize = data => {
@@ -26,17 +24,31 @@ export class MainPlayer extends Component {
       location: data.location,
       size: data.size
     }));
+
+    GameState.get('grow', data.id)
+      .map(event => event.size)
+      .subscribe(this.grow);
+    GameState.get('move', data.id)
+      .map(event => event.location)
+      .subscribe(this.move);
+    UserInput.mouseMove().subscribe(this.follow(data.id));
+    UserInput.mouseDown().subscribe(this.increaseSize(data.id));
   };
 
-  follow = newPosition => {
+  follow = id => location => {
+    GameState.notify('move', {id, location});
+  };
+
+  increaseSize = id => () => {
+    GameState.notify('grow', {id: id});
+  };
+
+  grow = size => {
+    this.setState(prevState => ({size: size}));
+  };
+
+  move = newPosition => {
     this.setState(prevState => ({location: newPosition}));
-    GameState.notifyOfMoveEvent(this.state.id, newPosition);
-  };
-
-  increaseSize = () => {
-    this.setState(prevState => ({
-      size: prevState.size + 20
-    }))
   };
 
   render() {

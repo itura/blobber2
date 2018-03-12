@@ -57,17 +57,29 @@ export class SmolBlob extends Component {
   }
 
   componentDidMount() {
-    this.getMoveEvents = GameState.getMoveEvents(this.state.id)
-      .subscribe(this.move);
+    this.subscriptions = [
+      GameState.get('move', this.state.id)
+        .map(event => event.location)
+        .subscribe(this.move),
+      GameState.get('grow', this.state.id)
+        .map(event => event.size)
+        .subscribe(this.grow)
+    ];
   }
 
   componentWillUnMount() {
-    this.getMoveEvents.unsubscribe();
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   move = newLocation => {
     this.setState(prevState => ({
       location: newLocation,
+    }));
+  };
+
+  grow = size => {
+    this.setState(prevState => ({
+      size: size,
     }));
   };
 
