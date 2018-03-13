@@ -10,9 +10,10 @@ function createGameState() {
   const socket = openSocket('/', {
     reconnection: false
   });
-  console.log('hi');
 
-  const eventTypes = ['initialize', 'move', 'newPlayer', 'grow'];
+  socket.on('error', data => console.log('error!', data));
+
+  const eventTypes = ['initialize', 'move', 'newPlayer', 'grow', 'remove'];
   eventTypes.forEach(type => {
     socket.on(type, data => bus.next(Event(type, data)));
   });
@@ -25,7 +26,8 @@ function createGameState() {
 
   return {
     get(type, id = null) {
-      let source = filterBy(type);
+      let source = filterBy(type)
+        .do(event => console.log(type, event));
 
       if (id) {
         source = source.filter(event => event.id === id);
@@ -39,6 +41,7 @@ function createGameState() {
     },
 
     notify(type, data) {
+      console.log('notify', type, data);
       socket.emit(type, data);
     }
   };

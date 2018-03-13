@@ -20,7 +20,6 @@ class App extends Component {
   componentDidMount() {
     this.subscriptions = [
       GameState.get('initialize').subscribe(this.initialize),
-      GameState.get('newPlayer').subscribe(this.addPlayer),
 
       // debug monitoring
       Observable.timer(1000, 2000)
@@ -38,17 +37,36 @@ class App extends Component {
       blobs: data.blobs.filter(blob => blob.id !== data.id),
       mainPlayerId: data.id
     }));
+
+    this.subscriptions.push(
+      GameState.get('newPlayer').subscribe(this.addPlayer(data.id)),
+      GameState.get('remove')
+        .map(event => event.id)
+        .subscribe(this.removePlayer))
   };
 
-  addPlayer = player => {
+  addPlayer = id => player => {
     this.setState(prevState => {
       let blobs = prevState.blobs;
 
-      if (player.id !== this.state.mainPlayerId) {
+      if (player.id !== id) {
         blobs.push(player);
       }
 
       return {blobs};
+    });
+  };
+
+  removePlayer = id => {
+    this.setState(prevState => {
+      const blob = prevState.blobs.find(blob => blob.id === id);
+      if (blob) {
+        const index = prevState.blobs.indexOf(blob);
+        prevState.blobs.splice(index, 1)
+        return {
+          blobs: prevState.blobs
+        }
+      }
     })
   };
 

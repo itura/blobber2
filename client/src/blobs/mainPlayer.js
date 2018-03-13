@@ -15,7 +15,13 @@ export class MainPlayer extends Component {
   }
 
   componentDidMount() {
-    GameState.get('initialize').subscribe(this.initialize);
+    this.subscriptions = [
+      GameState.get('initialize').subscribe(this.initialize)
+    ];
+  }
+
+  componentWillUnmount() {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   initialize = data => {
@@ -25,17 +31,20 @@ export class MainPlayer extends Component {
       size: data.size
     }));
 
-    GameState.get('grow', data.id)
-      .map(event => event.size)
-      .subscribe(this.grow);
-    GameState.get('move', data.id)
-      .map(event => event.location)
-      .subscribe(this.move);
-    UserInput.mouseMove().subscribe(this.follow(data.id));
-    UserInput.mouseDown().subscribe(this.increaseSize(data.id));
+    this.subscriptions.push(
+      GameState.get('grow', data.id)
+        .map(event => event.size)
+        .subscribe(this.grow),
+      GameState.get('move', data.id)
+        .map(event => event.location)
+        .subscribe(this.move),
+      UserInput.mouseMove().subscribe(this.follow(data.id)),
+      UserInput.mouseDown().subscribe(this.increaseSize(data.id))
+    );
   };
 
   follow = id => location => {
+    console.log('follow', id, location);
     GameState.notify('move', {id, location});
   };
 

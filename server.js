@@ -56,30 +56,26 @@ function createEventBus(source) {
 }
 
 let blobs = [];
-const eventSource = new Subject();
+const eventSource = new Subject().share();
 const eventBus = createEventBus(eventSource);
 const eventTypes = ['initialize', 'move', 'newPlayer', 'grow'];
 
-// eventBus.rebroadcast('newPlayer');
-// eventBus.rebroadcast('move');
-// eventBus.rebroadcast('grow');
-
-// blob digest - sends a summary of the current state of all the blobs
-
 // initial game state
-[1, 2, 3, 4, 5].forEach((_, index) => {
-  const blob = createBlob(100 * index, 100 * index, 20);
-  Observable.timer(1000, 2000)
-    .map(value => ({id: blob.id, location: blob.location.changeBy(value * 10, value * 10)}))
-    .subscribe(data => {
-      blob.location = data.location;
-      blob.size += 10;
-      digest.add('move', data);
-      digest.add('grow', {id: blob.id, size: blob.size + 10});
-    });
-});
+// [1, 2, 3, 4, 5].forEach((_, index) => {
+//   const blob = createBlob(100 * index, 100 * index, 20);
+//   Observable.timer(1000, 2000)
+//     .map(value => ({id: blob.id, location: blob.location.changeBy(value * 10, value * 10)}))
+//     .subscribe(data => {
+//       blob.location = data.location;
+//       blob.size += 10;
+//       digest.add('move', data);
+//       digest.add('grow', {id: blob.id, size: blob.size + 10});
+//     });
+// });
 
+// handlers for game events
 eventBus.get('move').subscribe(data => {
+  console.log('handling move', data);
   const blob = blobs.find(blob => blob.id === data.id);
   if (blob) {
     blob.location = data.location;
@@ -88,11 +84,21 @@ eventBus.get('move').subscribe(data => {
 });
 
 eventBus.get('grow').subscribe(data => {
+  console.log('handling grow', data);
   const blob = blobs.find(blob => blob.id === data.id);
   if (blob) {
     blob.size += 10;
     digest.add('grow', {id: blob.id, size: blob.size});
   }
+});
+
+eventBus.get('remove').subscribe(data => {
+  console.log('handling remove', data);
+  const blob = blobs.find(blob => blob.id === data.id);
+  if (blob) {
+    blobs.splice(blobs.indexOf(blob), 1);
+  }
+  digest.add('remove', data);
 });
 
 // debug monitoring
@@ -112,8 +118,16 @@ io.on('connection', socket => {
     blobs: blobs
   });
 
+  socket.on('disconnect', () => {
+    console.log(`User ${player.id} disconnected.`);
+    eventSource.next({type: 'remove', data: {id: player.id}})
+  });
+
   // route events coming in on this socket to the main event bus
-  eventTypes.forEach(type => socket.on(type, data => eventSource.next({type, data})));
+  eventTypes.forEach(type => socket.on(type, data => {
+    console.log(type, data);
+    eventSource.next({type, data})
+  }));
 
   // let the world know what just happened!
   digest.add('newPlayer', player)
