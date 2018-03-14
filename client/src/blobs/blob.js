@@ -24,7 +24,7 @@ export const Blob = ({location, size}) => {
   const baseRadius = (size / 2);
   const strokeWidth = 5;
 
-  if (baseRadius < strokeWidth) {
+  if (baseRadius <= strokeWidth) {
     return null;
   }
 

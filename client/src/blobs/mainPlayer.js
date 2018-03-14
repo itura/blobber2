@@ -44,7 +44,6 @@ export class MainPlayer extends Component {
   };
 
   follow = id => location => {
-    console.log('follow', id, location);
     GameState.notify('move', {id, location});
   };
 
