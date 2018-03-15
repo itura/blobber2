@@ -17,7 +17,6 @@ Observable.timer(0, 100).subscribe(() => {
 });
 
 // Set up handlers to consume events from the bus and update the digest
-// todo manage subscriptions
 eventHandlers.forEach(([name, handler]) => {
   eventBus.get(name).subscribe(handler(digest));
 });

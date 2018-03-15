@@ -14,11 +14,11 @@ function connect() {
 describe('server', () => {
   let serverInstance, client1, client2;
 
-  beforeEach(() => {
+  beforeAll(() => {
     serverInstance = server.listen(port, () => console.log('Server Started\n-----'));
   });
 
-  afterEach(() => {
+  afterAll(() => {
     serverInstance.close(() => console.log('-----\nServer closed\n\n'));
   });
 
@@ -64,13 +64,6 @@ describe('server', () => {
 
     let client1Id = null;
 
-    const found$ = new Subject()
-      .filter(data => data.id === client1Id)
-      .subscribe(() => {
-        client2.close();
-        done();
-      });
-
     client1 = connect();
     client1.on('initialize', data => {
       client1Id = data.id;
@@ -82,10 +75,11 @@ describe('server', () => {
       client2Initialized$.next(true);
     });
     client2.on('remove', data => {
-      found$.next(data);
+      if (data.id === client1Id) {
+        client2.close();
+        done();
+      }
     });
-
-
   });
 
   it('broadcasts player move events', done => {
