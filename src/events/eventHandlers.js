@@ -21,12 +21,12 @@ const growHandler = digest => data => {
 };
 
 const removeHandler = digest => data => {
-  // console.log('handling remove', data);
+  console.log('handling remove', data);
   const blob = blobs.find(blob => blob.id === data.id);
   if (blob) {
     blobs.splice(blobs.indexOf(blob), 1);
+    digest.add('remove', data);
   }
-  digest.add('remove', data);
 };
 
 const newPlayer = digest => data => {

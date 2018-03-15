@@ -1,5 +1,6 @@
 const {server} = require('../src/server');
 const openSocket = require('socket.io-client');
+const {Observable, Subject} = require('rxjs');
 
 const port = 9001;
 const clientOptions = {
@@ -14,16 +15,15 @@ describe('server', () => {
   let serverInstance, client1, client2;
 
   beforeEach(() => {
-    serverInstance = server.listen(port, () => console.log(`Listening on ${port}`));
+    serverInstance = server.listen(port, () => console.log('Server Started\n-----'));
   });
 
   afterEach(() => {
-    serverInstance.close();
+    serverInstance.close(() => console.log('-----\nServer closed\n\n'));
   });
 
   it('sends an initialize event on connection', done => {
     client1 = connect();
-
     client1.on('initialize', data => {
       expect(data.id).not.toBeNull();
       expect(data.location).toEqual({x: 100, y: 100});
@@ -31,12 +31,12 @@ describe('server', () => {
       expect(data.title).toEqual('Blobber2 😍😎🤗👌');
       expect(data.blobs).not.toBeNull();
 
-      client1.disconnect();
+      client1.close();
       done();
     });
   });
 
-  it('notifies existing players when a player joins', done => {
+  it('broadcasts when a player joins', done => {
     client1 = connect();
     client1.on('initialize', data => {
       client2 = connect();
@@ -47,27 +47,74 @@ describe('server', () => {
       expect(data.location).toEqual({x: 100, y: 100});
       expect(data.size).toEqual(100);
 
-      client1.disconnect();
-      client2.disconnect();
+      client1.close();
+      client2.close();
       done();
     });
   });
 
-  it('notifies existing players when a player leaves', done => {
-    let client1Id;
+  it('broadcasts when a player leaves', done => {
+    const client1Initialized$ = new Subject();
+    const client2Initialized$ = new Subject();
+
+    Observable.forkJoin(client1Initialized$.take(1), client2Initialized$.take(1))
+      .subscribe(() => {
+        client1.close();
+      });
+
+    let client1Id = null;
+
+    const found$ = new Subject()
+      .filter(data => data.id === client1Id)
+      .subscribe(() => {
+        client2.close();
+        done();
+      });
 
     client1 = connect();
     client1.on('initialize', data => {
       client1Id = data.id;
-      client1.disconnect();
+      client1Initialized$.next(true);
     });
 
     client2 = connect();
+    client2.on('initialize', data => {
+      client2Initialized$.next(true);
+    });
     client2.on('remove', data => {
-      expect(data.id).toEqual(client1Id);
+      found$.next(data);
+    });
 
-      client2.disconnect();
+
+  });
+
+  it('broadcasts player move events', done => {
+    const found$ = new Subject();
+    found$.subscribe(data => {
+      expect(data.location).toEqual(newLocation);
+
+      client1.close();
+      client2.close();
       done();
+    });
+
+    let client1Id;
+    const newLocation = {x: 500, y: 400};
+
+    client1 = connect();
+    client1.on('initialize', data => {
+      client1Id = data.id;
+      client1.emit('move', {
+        id: data.id,
+        location: newLocation
+      });
+    });
+
+    client2 = connect();
+    client2.on('move', data => {
+      if (data.id === client1Id) {
+        found$.next(data);
+      }
     });
   });
 });
