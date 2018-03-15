@@ -11,12 +11,15 @@
     "socket.io": "^2.0.4"
   },
   "devDependencies": {
+    "@types/jasmine": "^2.8.6",
     "concurrently": "^3.5.1",
+    "jasmine": "^3.1.0",
     "nodemon": "^1.17.1"
   },
   "scripts": {
     "client": "cd client && yarn start",
     "server": "nodemon src/index.js",
-    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\""
+    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "test": "jasmine"
   }
 }
