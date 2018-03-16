@@ -1,4 +1,4 @@
-const {server} = require('../src/server');
+const {init} = require('../src/server');
 const openSocket = require('socket.io-client');
 const {Observable, Subject} = require('rxjs');
 const { filter, map, take, first } = require('rxjs/operators');
@@ -16,6 +16,7 @@ describe('server', () => {
   let serverInstance, client1, client2;
 
   beforeAll(() => {
+    const server = init(() => null);
     serverInstance = server.listen(port, () => console.log('Server Started\n-----'));
   });
 

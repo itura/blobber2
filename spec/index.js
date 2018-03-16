@@ -1,4 +1,4 @@
-let colors;
+require('colors');
 const Jasmine = require('jasmine');
 const jasmine = new Jasmine();
 
@@ -18,7 +18,6 @@ jasmine.loadConfig({
 
 const customReporter = {
   jasmineStarted(suiteInfo) {
-    colors = require('colors');
     console.log('hi');
     console.log('==>'.magenta);
     console.log(`*** Running suite with ' ${suiteInfo.totalSpecsDefined} ***`.magenta);
