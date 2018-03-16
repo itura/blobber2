@@ -1,6 +1,7 @@
 const {server} = require('../src/server');
 const openSocket = require('socket.io-client');
 const {Observable, Subject} = require('rxjs');
+const { filter, map, take, first } = require('rxjs/operators');
 
 const port = 9001;
 const clientOptions = {
@@ -20,6 +21,8 @@ describe('server', () => {
 
   afterAll(() => {
     serverInstance.close(() => console.log('-----\nServer closed\n\n'));
+    client1 = null;
+    client2 = null;
   });
 
   it('sends an initialize event on connection', done => {
@@ -28,13 +31,15 @@ describe('server', () => {
       expect(data.id).not.toBeNull();
       expect(data.location).toEqual({x: 100, y: 100});
       expect(data.size).toEqual(100);
-      expect(data.title).toEqual('Blobber2 😍😎🤗👌');
+      expect(data.title).toEqual('Blobber2 😍😎🤗👌!');
       expect(data.blobs).not.toBeNull();
 
       client1.close();
       done();
     });
   });
+
+
 
   it('broadcasts when a player joins', done => {
     client1 = connect();
@@ -53,28 +58,48 @@ describe('server', () => {
     });
   });
 
+  function createObservableSocket(socket, ...eventTypes) {
+    const source$ = new Subject();
+
+    eventTypes.forEach(type => {
+      socket.on(type, data => source$.next({type, data}));
+    });
+
+    const eventsMatching = type => source$.filter(event => event.type === type);
+    const unwrap = event => event.data;
+
+    return {
+      get(type) {
+        return eventsMatching(type)
+          .map(unwrap);
+      },
+
+      first(type) {
+        return eventsMatching(type)
+          .first()
+          .map(unwrap);
+      },
+
+      close() {
+        socket.close();
+      }
+    }
+  }
+
   it('broadcasts when a player leaves', done => {
-    const client1Initialized$ = new Subject();
-    const client2Initialized$ = new Subject();
-
-    Observable.forkJoin(client1Initialized$.take(1), client2Initialized$.take(1))
-      .subscribe(() => {
-        client1.close();
-      });
-
     let client1Id = null;
 
-    client1 = connect();
-    client1.on('initialize', data => {
-      client1Id = data.id;
-      client1Initialized$.next(true);
+    client1 = createObservableSocket(connect(), 'initialize');
+    client2 = createObservableSocket(connect(), 'initialize', 'remove');
+
+    Observable.forkJoin(client1.first('initialize'), client2.first('initialize'))
+      .subscribe(() => client1.close());
+
+    client1.get('initialize').subscribe(data => {
+      client1Id = data.id
     });
 
-    client2 = connect();
-    client2.on('initialize', data => {
-      client2Initialized$.next(true);
-    });
-    client2.on('remove', data => {
+    client2.get('remove').subscribe(data => {
       if (data.id === client1Id) {
         client2.close();
         done();

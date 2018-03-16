@@ -6,6 +6,7 @@
 
    cd ..
    yarn install
+   yarn test
    yarn dev
    ```
 
