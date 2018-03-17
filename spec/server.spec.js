@@ -17,11 +17,11 @@ describe('server', () => {
 
   beforeAll(() => {
     const server = init(() => null);
-    serverInstance = server.listen(port, () => console.log('Server Started\n-----'));
+    serverInstance = server.listen(port);
   });
 
   afterAll(() => {
-    serverInstance.close(() => console.log('-----\nServer closed\n\n'));
+    serverInstance.close();
     client1 = null;
     client2 = null;
   });
@@ -32,15 +32,13 @@ describe('server', () => {
       expect(data.id).not.toBeNull();
       expect(data.location).toEqual({x: 100, y: 100});
       expect(data.size).toEqual(100);
-      expect(data.title).toEqual('Blobber2 😍😎🤗👌!');
+      expect(data.title).toEqual('Blobber2 😍😎🤗👌');
       expect(data.blobs).not.toBeNull();
 
       client1.close();
       done();
     });
   });
-
-
 
   it('broadcasts when a player joins', done => {
     client1 = connect();
