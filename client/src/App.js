@@ -4,6 +4,7 @@ import {GameState} from './eventSources/gameState';
 import {MainPlayer} from './blobs/mainPlayer';
 import {SmolBlob} from './blobs/blob';
 import {Observable} from 'rxjs';
+import {KeyCombo, Keys, UserInput} from './eventSources/userInput';
 
 class App extends Component {
 
@@ -18,8 +19,18 @@ class App extends Component {
   }
 
   componentDidMount() {
+    const spaceBar = KeyCombo(Keys.SPACE);
+
     this.subscriptions = [
       GameState.get('initialize').subscribe(this.initialize),
+
+      UserInput.get(spaceBar).subscribe(data => {
+        this.setState(prevState => {
+          return {
+            title: prevState.title + '!'
+          }
+        });
+      }),
 
       // debug monitoring
       Observable.timer(1000, 2000)
