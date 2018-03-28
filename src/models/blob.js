@@ -20,15 +20,6 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-function slowGrow(blob) {
-  Observable.timer(1000, 3000).subscribe(() => {
-    eventBus.put('grow', {
-      id: blob.id
-    });
-  });
-  return blob;
-}
-
 function hover(blob) {
   Observable.timer(0, 300).subscribe(() => {
     eventBus.put('move', {
@@ -54,7 +45,6 @@ function follow(follower, leader) {
 
 module.exports = {
   createBlob,
-  slowGrow,
   hover,
   follow
 };

@@ -19,11 +19,11 @@ class App extends Component {
 
   componentDidMount() {
     this.subscriptions = [
-      GameState.get('initialize').subscribe(this.initialize),
+      GameState.get('initialize').subscribe(this.initialize)
 
       // debug monitoring
-      Observable.timer(1000, 2000)
-        .subscribe(value => console.log('blobs:', this.state.blobs.length, this.state.blobs.map(blob => blob.id)))
+      //Observable.timer(1000, 2000)
+      //  .subscribe(value => console.log('blobs:', this.state.blobs.length, this.state.blobs.map(blob => blob.id)))
     ];
   }
 

@@ -7,7 +7,7 @@ export function Event(type, data) {
 
 function createGameState() {
   const bus = new Subject();
-  const socket = openSocket('/', {
+  const socket = openSocket('http://localhost:5000/', {
     reconnection: false
   });
 
