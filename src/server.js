@@ -17,6 +17,7 @@ function init(log) {
 // Establish update loop
   const digest = createDigest(io.sockets);
   Observable.timer(0, 15).subscribe(() => {
+    eventBus.put('updateAll', {}); 
     digest.send();
   });
 

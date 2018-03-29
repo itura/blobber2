@@ -18,10 +18,8 @@ const removeHandler = digest => data => {
 const directionHandler = digest => data => {
   const blob = blobs.find(blob => blob.id === data.id);
   if (blob) {
-    blob.direction.x = blob.direction.x + data.direction.x;
-    blob.direction.y = blob.direction.y + data.direction.y;
-    data.message = blob.direction;
-    //digest.add('msg', data);
+    blob.direction.x = data.direction.x;
+    blob.direction.y = data.direction.y;
   }
 };
 
@@ -36,12 +34,21 @@ const mouseHandler = digest => data => {
   //pass
 };
 
+const update = digest => data => {
+  blobs.forEach(blob => {
+    blob.location.x = blob.location.x + blob.direction.x*5;
+    blob.location.y = blob.location.y + blob.direction.y*5;
+    digest.add('move', blob);
+  });
+};
+
 const eventHandlers = [
   ['newPlayer', newPlayer],
   ['remove', removeHandler],
   ['updateDirection', directionHandler],
   ['keyEvent', keyHandler],
-  ['mouseClick', mouseHandler]
+  ['mouseClick', mouseHandler],
+  ['updateAll', update]
 ];
 
 module.exports = {
