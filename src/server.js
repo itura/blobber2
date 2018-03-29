@@ -13,7 +13,7 @@ const {eventHandlers} = require('./events/eventHandlers');
 function init(log) {
 // Establish update loop
   const digest = createDigest(io.sockets);
-  Observable.timer(0, 100).subscribe(() => {
+  Observable.timer(0, 10).subscribe(() => {
     digest.send();
   });
 
@@ -47,7 +47,7 @@ function init(log) {
       id: player.id,
       location: player.location,
       size: player.size,
-      title: 'Blobber2 😍😎🤗👌',
+      title: 'Blobber 2',
       blobs: blobs
     });
 

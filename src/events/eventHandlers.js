@@ -32,9 +32,7 @@ const removeHandler = digest => data => {
 const newPlayer = digest => data => {
   // console.log('handling newPlayer', data);
   const player = blobs.find(blob => blob.id === data.id);
-  const follower = saveBlob(follow(createBlob(500, 500, 50), player));
   digest.add('newPlayer', player);
-  digest.add('newPlayer', follower);
 };
 
 const eventHandlers = [

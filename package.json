@@ -1,9 +1,9 @@
 {
   "name": "blobber2",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "Sequel to the smash hit blobber",
   "main": "server.js",
-  "author": "austin.w.garrard@gmail.com",
+  "authors": ["austin.w.garrard@gmail.com", "danwbyrne@gmail.com"],
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.2",
