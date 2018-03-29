@@ -3,7 +3,6 @@ import './App.css';
 import {GameState} from './eventSources/gameState';
 import {MainPlayer} from './blobs/mainPlayer';
 import {SmolBlob} from './blobs/blob';
-import {Observable} from 'rxjs';
 
 class App extends Component {
 

@@ -60,10 +60,7 @@ export class SmolBlob extends Component {
     this.subscriptions = [
       GameState.get('move', this.state.id)
         .map(event => event.location)
-        .subscribe(this.move),
-      GameState.get('grow', this.state.id)
-        .map(event => event.size)
-        .subscribe(this.grow)
+        .subscribe(this.move)
     ];
   }
 

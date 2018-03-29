@@ -32,29 +32,33 @@ export class MainPlayer extends Component {
     }));
 
     this.subscriptions.push(
-      GameState.get('grow', data.id)
-        .map(event => event.size)
-        .subscribe(this.grow),
       GameState.get('move', data.id)
         .map(event => event.location)
         .subscribe(this.move),
-      UserInput.mouseMove().subscribe(this.follow(data.id)),
-      UserInput.mouseDown().subscribe(this.increaseSize(data.id))
+      UserInput.mouseMove().subscribe(this.mouseHandle(data.id)),
+      UserInput.mouseDown().subscribe(this.clickHandle(data.id)),
+      UserInput.keyDown().subscribe(this.handleKeyDown(data.id)),
+      UserInput.keyUp().subscribe(this.handleKeyUp(data.id))
     );
   };
-
-  follow = id => location => {
-    GameState.notify('move', {id, location});
+  //User Input Handlers
+  handleKeyDown = id => event => {
+    console.log('keyDown', event.keyCombo());
   };
 
-  increaseSize = id => () => {
-    GameState.notify('grow', {id: id});
+  handleKeyUp = id => event => {
+    console.log('keyUp', event.keyCombo());
   };
 
-  grow = size => {
-    this.setState(prevState => ({size: size}));
+  mouseHandle = id => location => {
+    //pass
   };
 
+  clickHandle = id => location => {
+    //pass
+  };
+
+  //Server Command Handlers
   move = newPosition => {
     this.setState(prevState => ({location: newPosition}));
   };

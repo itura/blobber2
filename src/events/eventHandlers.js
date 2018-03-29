@@ -3,7 +3,6 @@ const {createBlob, follow} = require('../models/blob');
 const {saveBlob} = require('../gameState');
 
 const moveHandler = digest => data => {
-  // console.log('handling move', data);
   const blob = blobs.find(blob => blob.id === data.id);
   if (blob) {
     blob.location = data.location;
@@ -11,13 +10,12 @@ const moveHandler = digest => data => {
   }
 };
 
-const growHandler = digest => data => {
-  // console.log('handling grow', data);
-  const blob = blobs.find(blob => blob.id === data.id);
+//our keyInput handler when we get one from a client
+const keyHandler = digest => data => {
+  blob = blobs.find(blob => blob.id === data.id);
   if (blob) {
-    blob.size += 10;
-    digest.add('grow', {id: blob.id, size: blob.size});
-  }
+    console.log(data.keyEvent);
+  };
 };
 
 const removeHandler = digest => data => {
@@ -37,9 +35,9 @@ const newPlayer = digest => data => {
 
 const eventHandlers = [
   ['move', moveHandler],
-  ['grow', growHandler],
   ['remove', removeHandler],
-  ['newPlayer', newPlayer]
+  ['newPlayer', newPlayer],
+  ['keyEvent', keyHandler]
 ];
 
 module.exports = {
