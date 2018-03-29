@@ -10,6 +10,7 @@ export class MainPlayer extends Component {
     this.state = {
       id: 0,
       location: Location.create(),
+      direction: Direction.create(),
       size: 0.
     }
   }
@@ -35,9 +36,6 @@ export class MainPlayer extends Component {
       GameState.get('move', data.id)
         .map(event => event.location)
         .subscribe(this.move),
-      GameState.get('msg', data.id)
-        .map(event => event.message)
-        .subscribe(this.msg),
       UserInput.mouseMove().subscribe(this.mouseHandle(data.id)),
       UserInput.mouseDown().subscribe(this.clickHandle(data.id)),
       UserInput.keyDown().subscribe(this.handleKeyDown(data.id)),
@@ -46,7 +44,6 @@ export class MainPlayer extends Component {
   };
   //User Input Handlers
   handleKeyDown = id => event => {
-    //console.log('keyDown', event.keyCombo());
     const newDirection = Direction.create();
     event.keyCombo().forEach(keyCode => {
       if (keyCode in Directions) {
@@ -62,14 +59,12 @@ export class MainPlayer extends Component {
   handleKeyUp = id => event => {
     const newDirection = Direction.create();
     event.keyCombo().forEach(keyCode => {
-      console.log(keyCode);
       if (keyCode in Directions) {
         newDirection.x = newDirection.x + -1*Directions[keyCode].x;
         newDirection.y = newDirection.y + -1*Directions[keyCode].y;
       }
     });
-    //console.log(newDirection);
-    if (newDirection !== Direction.create()) {
+    if (newDirection !== this.direction) {
       GameState.notify('updateDirection', {id: id, direction: newDirection});
     }
   };

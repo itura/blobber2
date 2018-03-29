@@ -16,7 +16,7 @@ function createGameState() {
     socket.disconnect();
   });
 
-  const eventTypes = ['initialize', 'move', 'newPlayer', 'remove', 'msg'];
+  const eventTypes = ['initialize', 'move', 'newPlayer', 'remove'];
   eventTypes.forEach(type => {
     socket.on(type, data => bus.next(Event(type, data)));
   });
