@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {UserInput} from '../eventSources/userInput';
+import {UserInput, Directions} from '../eventSources/userInput';
 import {GameState} from '../eventSources/gameState';
-import {Blob, Location} from './blob';
+import {Blob, Location, Direction} from './blob';
 
 export class MainPlayer extends Component {
   constructor() {
@@ -10,7 +10,7 @@ export class MainPlayer extends Component {
     this.state = {
       id: 0,
       location: Location.create(),
-      size: 0
+      size: 0.
     }
   }
 
@@ -35,6 +35,9 @@ export class MainPlayer extends Component {
       GameState.get('move', data.id)
         .map(event => event.location)
         .subscribe(this.move),
+      GameState.get('msg', data.id)
+        .map(event => event.message)
+        .subscribe(this.msg),
       UserInput.mouseMove().subscribe(this.mouseHandle(data.id)),
       UserInput.mouseDown().subscribe(this.clickHandle(data.id)),
       UserInput.keyDown().subscribe(this.handleKeyDown(data.id)),
@@ -43,11 +46,32 @@ export class MainPlayer extends Component {
   };
   //User Input Handlers
   handleKeyDown = id => event => {
-    console.log('keyDown', event.keyCombo());
+    //console.log('keyDown', event.keyCombo());
+    const newDirection = Direction.create();
+    event.keyCombo().forEach(keyCode => {
+      if (keyCode in Directions) {
+        newDirection.x = newDirection.x + Directions[keyCode].x;
+        newDirection.y = newDirection.y + Directions[keyCode].y;
+      }
+    });
+    if (newDirection !== Direction.create()) {
+      GameState.notify('updateDirection', {id: id, direction: newDirection});
+    }
   };
 
   handleKeyUp = id => event => {
-    console.log('keyUp', event.keyCombo());
+    const newDirection = Direction.create();
+    event.keyCombo().forEach(keyCode => {
+      console.log(keyCode);
+      if (keyCode in Directions) {
+        newDirection.x = newDirection.x + -1*Directions[keyCode].x;
+        newDirection.y = newDirection.y + -1*Directions[keyCode].y;
+      }
+    });
+    //console.log(newDirection);
+    if (newDirection !== Direction.create()) {
+      GameState.notify('updateDirection', {id: id, direction: newDirection});
+    }
   };
 
   mouseHandle = id => location => {
@@ -62,6 +86,10 @@ export class MainPlayer extends Component {
   move = newPosition => {
     this.setState(prevState => ({location: newPosition}));
   };
+
+  msg = message => {
+    console.log(message);
+  }
 
   render() {
     return (

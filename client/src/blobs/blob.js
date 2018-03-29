@@ -7,6 +7,12 @@ export const Location = {
   }
 };
 
+export const Direction = {
+  create(x = 0, y = 0) {
+    return {x, y};
+  }
+};
+
 const style = function (x, y) {
   return {
     position: 'absolute',

@@ -18,6 +18,13 @@ export const Keys = {
   M: 77
 };
 
+export const Directions = {
+  87: {x:0, y:-1},
+  83: {x:0, y:1},
+  68: {x:1, y:0},
+  65: {x:-1, y:0}
+};
+
 export function KeyCombo(...keys) {
   return Set(keys);
 }
@@ -46,9 +53,9 @@ function createUserInput() {
       .map(newKeyCombo => KeyPressEvent(newKeyCombo))
       .share();
 
-  Observable.fromEvent(window, 'keyup').subscribe(event => {
-    currentKeyCombo = currentKeyCombo.delete(event.keyCode);
-  });
+  //Observable.fromEvent(window, 'keyup').subscribe(event => {
+  //  currentKeyCombo = currentKeyCombo.delete(event.keyCode);
+  //});
 
   const mouseMove = Observable.fromEvent(window, 'mousemove')
     .sampleTime(100)

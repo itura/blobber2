@@ -24,6 +24,8 @@ function saveBlob(blob) {
   return blob;
 }
 
+//saveBlob(
+//  hover(createBlob(100, 100, 20)));
 
 module.exports = {
   createDigest,
