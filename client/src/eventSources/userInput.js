@@ -47,15 +47,15 @@ function createUserInput() {
     .map(newKeyCombo => KeyPressEvent(newKeyCombo))
     .share();
 
-    const keyUp = Observable.fromEvent(window, 'keyup')
-      .map(event => currentKeyCombo.remove(event.keyCode))
-      .do(newKeyCombo => currentKeyCombo = newKeyCombo)
-      .map(newKeyCombo => KeyPressEvent(newKeyCombo))
-      .share();
+  const keyUp = Observable.fromEvent(window, 'keyup')
+    .map(event => currentKeyCombo.remove(event.keyCode))
+    .do(newKeyCombo => currentKeyCombo = newKeyCombo)
+    .map(newKeyCombo => KeyPressEvent(newKeyCombo))
+    .share();
 
-  //Observable.fromEvent(window, 'keyup').subscribe(event => {
-  //  currentKeyCombo = currentKeyCombo.delete(event.keyCode);
-  //});
+  Observable.fromEvent(window, 'keyup').subscribe(event => {
+    currentKeyCombo = currentKeyCombo.delete(event.keyCode);
+  });
 
   const mouseMove = Observable.fromEvent(window, 'mousemove')
     .sampleTime(100)
