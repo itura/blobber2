@@ -74,12 +74,8 @@ function createUserInput() {
       return mouseDown;
     },
 
-    keyDown() {
-      return keyDown;
-    },
-
-    keyUp() {
-      return keyUp;
+    keyPress() {
+      return keyDown.merge(keyUp);
     },
 
     get(keyCombo) {

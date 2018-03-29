@@ -18,8 +18,8 @@ const style = function (x, y) {
     position: 'absolute',
     left: x,
     top: y,
-    WebkitTransition: 'all .5s ease-out',
-    transition: 'all .5s ease-out',
+    //WebkitTransition: 'all .015s ease-out',
+    //transition: 'all .015s ease-out',
     overflow: 'visible',
     padding: 0,
     margin: 0
