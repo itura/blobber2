@@ -52,6 +52,9 @@ export class MainPlayer extends Component {
       }
     });
     if (newDirection !== this.location) {
+      const mag = Math.sqrt((newDirection.x * newDirection.x) + (newDirection.y * newDirection.y));
+      newDirection.x = newDirection.x / mag;
+      newDirection.y = newDirection.y / mag;
       GameState.notify('updateDirection', {id: id, direction: newDirection});
     }
   };
