@@ -12,6 +12,7 @@ function createBlob(x, y, size) {
     id: newId,
     location: createLocation(x, y), 
     direction: createDirection(0, 0),
+    lookDir: createDirection(0, 0),
     size
   };
 }

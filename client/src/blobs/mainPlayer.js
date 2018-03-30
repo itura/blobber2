@@ -10,7 +10,7 @@ export class MainPlayer extends Component {
     this.state = {
       id: 0,
       location: Location.create(),
-      direction: Direction.create(),
+      lookDir: Direction.create(),
       size: 0.
     }
   }
@@ -45,7 +45,6 @@ export class MainPlayer extends Component {
   handleKeyPress = id => event => {
     const newDirection = Direction.create();
     event.keyCombo().forEach(keyCode => {
-      console.log('down key', keyCode)
       if (keyCode in Directions) {
         newDirection.x = newDirection.x + Directions[keyCode].x;
         newDirection.y = newDirection.y + Directions[keyCode].y;
@@ -60,7 +59,11 @@ export class MainPlayer extends Component {
   };
 
   mouseHandle = id => location => {
-    //pass
+    const newLookDirection = Direction.create();
+    const mag = Math.sqrt((location.x * location.x) + (location.y * location.y));
+    newLookDirection.x = location.x / mag;
+    newLookDirection.y = location.y / mag;
+    GameState.notify('mouseMove', {id: id, direction: newLookDirection});
   };
 
   clickHandle = id => location => {

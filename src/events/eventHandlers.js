@@ -30,15 +30,23 @@ const keyHandler = digest => data => {
   };
 };
 
-const mouseHandler = digest => data => {
+const mouseClickHandler = digest => data => {
   //pass
+};
+
+const mouseMoveHandler = digest => data => {
+  const blob = blobs.find(blob => blob.id === data.id);
+  if (blob) {
+    blob.lookDir.x = data.direction.x;
+    blob.lookDir.y = data.direction.y;
+  }
 };
 
 const update = digest => data => {
   blobs.forEach(blob => {
     blob.location.x = blob.location.x + blob.direction.x*5;
     blob.location.y = blob.location.y + blob.direction.y*5;
-    digest.add('move', blob);
+    digest.add('move', {id: blob.id, location: blob.location});
   });
 };
 
@@ -47,7 +55,8 @@ const eventHandlers = [
   ['remove', removeHandler],
   ['updateDirection', directionHandler],
   ['keyEvent', keyHandler],
-  ['mouseClick', mouseHandler],
+  ['mouseClick', mouseClickHandler],
+  ['mouseMove', mouseMoveHandler],
   ['updateAll', update]
 ];
 
