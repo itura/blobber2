@@ -27,7 +27,6 @@ class App extends Component {
 
   initialize = data => {
     this.setState(prevState => ({
-      title: data.title,
       blobs: data.blobs.filter(blob => blob.id !== data.id),
       mainPlayerId: data.id
     }));
