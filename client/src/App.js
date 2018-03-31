@@ -10,14 +10,15 @@ class App extends Component {
     super();
 
     this.state = {
-      title: '',
       blobs: [],
       mainPlayerId: 0
     }
   }
 
   componentDidMount() {
-    this.subscriptions = [];
+    this.subscriptions = [
+      GameState.get('initialize').subscribe(this.initialize)
+    ];
   }
 
   componentWillUnmount() {
@@ -71,7 +72,6 @@ class App extends Component {
 
     return (
       <div>
-        <h1>{this.state.title}</h1>
         <MainPlayer/>
         {blobComponents}
       </div>
