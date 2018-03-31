@@ -17,7 +17,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.subscriptions = [];
+    this.subscriptions = [
+    GameState.get('initialize').subscribe(this.initialize)
+    ];
   }
 
   componentWillUnmount() {
