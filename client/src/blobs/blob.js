@@ -13,18 +13,19 @@ export const Direction = {
   }
 };
 
-const style = function (x, y) {
+const style = function (x, y, zIndex) {
   return {
     position: 'absolute',
     left: x,
     top: y,
     overflow: 'visible',
     padding: 0,
-    margin: 0
+    margin: 0,
+    zIndex: zIndex
   }
 };
 
-export const Blob = ({location, size}) => {
+export const Blob = ({location, size, top}) => {
   const baseRadius = (size / 2);
   const strokeWidth = 5;
 
@@ -40,8 +41,10 @@ export const Blob = ({location, size}) => {
   const adjustedX = location.x - outerRadius + 5;
   const adjustedY = location.y - outerRadius + 5;
 
+  const zIndex = top ? 99 : 0;
+
   return (
-    <div style={style(adjustedX, adjustedY)}>
+    <div style={style(adjustedX, adjustedY, zIndex)}>
       <svg width={size} height={size}>
         <circle cx={baseRadius} cy={baseRadius} r={innerRadius} stroke="navy" strokeWidth={strokeWidth} fill="blue"/>
       </svg>
@@ -75,12 +78,6 @@ export class SmolBlob extends Component {
   move = newLocation => {
     this.setState(prevState => ({
       location: newLocation,
-    }));
-  };
-
-  grow = size => {
-    this.setState(prevState => ({
-      size: size,
     }));
   };
 

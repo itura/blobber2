@@ -81,7 +81,7 @@ export class MainPlayer extends Component {
 
   render() {
     return (
-      <Blob location={this.state.location} size={this.state.size}/>
+      <Blob location={this.state.location} size={this.state.size} top={true}/>
     )
   }
 }
