@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {Location} from '../blobs/blob';
+import {Vector} from '../blobs/blob';
 import {Set} from "immutable";
 
 export const Keys = {
@@ -60,7 +60,7 @@ function createUserInput() {
 
   const mouseMove = Observable.fromEvent(window, 'mousemove')
     .sampleTime(100)
-    .map(event => Location.create(event.clientX, event.clientY))
+    .map(event => Vector.create(event.clientX, event.clientY))
     .share();
 
   const mouseDown = Observable.fromEvent(window, 'mousedown')

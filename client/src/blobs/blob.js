@@ -1,30 +1,25 @@
 import React, {Component} from 'react';
 import {GameState} from '../eventSources/gameState';
 
-export const Location = {
+export const Vector = {
   create(x = 0, y = 0) {
     return {x, y};
   }
 };
 
-export const Direction = {
-  create(x = 0, y = 0) {
-    return {x, y};
-  }
-};
-
-const style = function (x, y) {
+const style = function (x, y, zIndex) {
   return {
     position: 'absolute',
     left: x,
     top: y,
     overflow: 'visible',
     padding: 0,
-    margin: 0
+    margin: 0,
+    zIndex: zIndex
   }
 };
 
-export const Blob = ({location, size}) => {
+export const Blob = ({location, size, top}) => {
   const baseRadius = (size / 2);
   const strokeWidth = 5;
 
@@ -40,8 +35,10 @@ export const Blob = ({location, size}) => {
   const adjustedX = location.x - outerRadius;
   const adjustedY = location.y - outerRadius;
 
+  const zIndex = top ? 99 : 0;
+
   return (
-    <div style={style(adjustedX, adjustedY)}>
+    <div style={style(adjustedX, adjustedY, zIndex)}>
       <svg width={size} height={size}>
         <circle cx={baseRadius} cy={baseRadius} r={innerRadius} stroke="navy" strokeWidth={strokeWidth} fill="blue"/>
       </svg>
@@ -75,12 +72,6 @@ export class SmolBlob extends Component {
   move = newLocation => {
     this.setState(prevState => ({
       location: newLocation,
-    }));
-  };
-
-  grow = size => {
-    this.setState(prevState => ({
-      size: size,
     }));
   };
 
