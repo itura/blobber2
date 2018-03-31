@@ -7,13 +7,17 @@ export const Location = {
   }
 };
 
+export const Direction = {
+  create(x = 0, y = 0) {
+    return {x, y};
+  }
+};
+
 const style = function (x, y) {
   return {
     position: 'absolute',
     left: x,
     top: y,
-    WebkitTransition: 'all .5s ease-out',
-    transition: 'all .5s ease-out',
     overflow: 'visible',
     padding: 0,
     margin: 0
@@ -33,8 +37,8 @@ export const Blob = ({location, size}) => {
 
   // Adjust the coordinates left and up so that the circle is drawn
   // in the center of the canvas
-  const adjustedX = location.x - outerRadius;
-  const adjustedY = location.y - outerRadius;
+  const adjustedX = location.x - outerRadius + 5;
+  const adjustedY = location.y - outerRadius + 5;
 
   return (
     <div style={style(adjustedX, adjustedY)}>
@@ -60,10 +64,7 @@ export class SmolBlob extends Component {
     this.subscriptions = [
       GameState.get('move', this.state.id)
         .map(event => event.location)
-        .subscribe(this.move),
-      GameState.get('grow', this.state.id)
-        .map(event => event.size)
-        .subscribe(this.grow)
+        .subscribe(this.move)
     ];
   }
 

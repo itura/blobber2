@@ -10,10 +10,14 @@ const {createBlob} = require('./models/blob');
 const {createDigest, blobs, saveBlob} = require('./gameState');
 const {eventHandlers} = require('./events/eventHandlers');
 
+//my idea right here is to handle movement here on the digest. What we'll do is 
+//handle moving players blobs here in the timer. it could work, going to back up before trying
+
 function init(log) {
 // Establish update loop
   const digest = createDigest(io.sockets);
-  Observable.timer(0, 10).subscribe(() => {
+  Observable.timer(0, 15).subscribe(() => {
+    eventBus.put('updateAll', {}); 
     digest.send();
   });
 
@@ -23,11 +27,7 @@ function init(log) {
   });
 
 // We will process these events when a client sends them
-  const clientEvents = ['move', 'grow'];
-
-// debug monitoring
-  Observable.timer(1000, 2000)
-    .subscribe(value => log('blobs:', blobs.length, blobs.map(blob => blob.id)));
+  const clientEvents = ['updateDirection'];
 
 // configure websockets
   io.on('connection', socket => {

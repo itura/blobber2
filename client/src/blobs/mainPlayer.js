@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {UserInput} from '../eventSources/userInput';
+import {UserInput, Directions} from '../eventSources/userInput';
 import {GameState} from '../eventSources/gameState';
-import {Blob, Location} from './blob';
+import {Blob, Location, Direction} from './blob';
 
 export class MainPlayer extends Component {
   constructor() {
@@ -10,7 +10,8 @@ export class MainPlayer extends Component {
     this.state = {
       id: 0,
       location: Location.create(),
-      size: 0
+      lookDir: Direction.create(),
+      size: 0.
     }
   }
 
@@ -32,32 +33,51 @@ export class MainPlayer extends Component {
     }));
 
     this.subscriptions.push(
-      GameState.get('grow', data.id)
-        .map(event => event.size)
-        .subscribe(this.grow),
       GameState.get('move', data.id)
         .map(event => event.location)
         .subscribe(this.move),
-      UserInput.mouseMove().subscribe(this.follow(data.id)),
-      UserInput.mouseDown().subscribe(this.increaseSize(data.id))
+      UserInput.mouseMove().subscribe(this.mouseHandle(data.id)),
+      UserInput.mouseDown().subscribe(this.clickHandle(data.id)),
+      UserInput.keyPress().subscribe(this.handleKeyPress(data.id))
     );
   };
-
-  follow = id => location => {
-    GameState.notify('move', {id, location});
+  //User Input Handlers
+  handleKeyPress = id => event => {
+    const newDirection = Direction.create();
+    event.keyCombo().forEach(keyCode => {
+      if (keyCode in Directions) {
+        newDirection.x = newDirection.x + Directions[keyCode].x;
+        newDirection.y = newDirection.y + Directions[keyCode].y;
+      }
+    });
+    if (newDirection !== this.location) {
+      const mag = Math.sqrt((newDirection.x * newDirection.x) + (newDirection.y * newDirection.y));
+      newDirection.x = newDirection.x / mag;
+      newDirection.y = newDirection.y / mag;
+      GameState.notify('updateDirection', {id: id, direction: newDirection});
+    }
   };
 
-  increaseSize = id => () => {
-    GameState.notify('grow', {id: id});
+  mouseHandle = id => location => {
+    const newLookDirection = Direction.create();
+    const mag = Math.sqrt((location.x * location.x) + (location.y * location.y));
+    newLookDirection.x = location.x / mag;
+    newLookDirection.y = location.y / mag;
+    GameState.notify('mouseMove', {id: id, direction: newLookDirection});
   };
 
-  grow = size => {
-    this.setState(prevState => ({size: size}));
+  clickHandle = id => location => {
+    //pass
   };
 
+  //Server Command Handlers
   move = newPosition => {
     this.setState(prevState => ({location: newPosition}));
   };
+
+  msg = message => {
+    console.log(message);
+  }
 
   render() {
     return (
