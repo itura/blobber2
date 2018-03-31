@@ -47,7 +47,6 @@ function init(log) {
       id: player.id,
       location: player.location,
       size: player.size,
-      title: 'Blobber 2',
       blobs: blobs
     });
 
