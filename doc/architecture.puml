@@ -1,0 +1,35 @@
+@startuml
+
+hide footbox
+
+box "Client"
+    UserInput -> MainPlayer: 'W' pressed event
+    participant SmolBlob
+    MainPlayer -> GameState: move event
+end box
+GameState -> WebSocket: move event
+
+box "Server"
+    WebSocket -> EventBus: move event
+    EventBus -> EventHandler: move event
+    EventHandler -> Digest: blob position changed
+
+    == Every n ms ==
+    Digest -> Digest
+    note right
+        Process changes
+        since last digest
+    end note
+end box
+
+loop for all connected players
+    skinparam backgroundColor transparent
+        loop for all changes in the digest
+
+        Digest -> WebSocket: event
+        WebSocket -> GameState: event
+        GameState -> SmolBlob: event
+        GameState -> MainPlayer: event
+    end
+end
+@enduml
