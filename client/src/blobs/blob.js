@@ -1,13 +1,7 @@
 import React, {Component} from 'react';
 import {GameState} from '../eventSources/gameState';
 
-export const Location = {
-  create(x = 0, y = 0) {
-    return {x, y};
-  }
-};
-
-export const Direction = {
+export const Vector = {
   create(x = 0, y = 0) {
     return {x, y};
   }
@@ -38,8 +32,8 @@ export const Blob = ({location, size, top}) => {
 
   // Adjust the coordinates left and up so that the circle is drawn
   // in the center of the canvas
-  const adjustedX = location.x - outerRadius + 5;
-  const adjustedY = location.y - outerRadius + 5;
+  const adjustedX = location.x - outerRadius;
+  const adjustedY = location.y - outerRadius;
 
   const zIndex = top ? 99 : 0;
 

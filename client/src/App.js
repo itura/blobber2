@@ -17,7 +17,7 @@ class App extends Component {
 
   componentDidMount() {
     this.subscriptions = [
-      GameState.get('initialize').subscribe(this.initialize)
+    GameState.get('initialize').subscribe(this.initialize)
     ];
   }
 

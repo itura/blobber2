@@ -1,4 +1,4 @@
-const {createLocation, createDirection} = require('./position');
+const {createVector} = require('./position');
 const {Observable} = require('rxjs');
 const {eventBus} = require('../events/eventBus');
 
@@ -10,9 +10,9 @@ function createBlob(x, y, size) {
 
   return {
     id: newId,
-    location: createLocation(x, y), 
-    direction: createDirection(0, 0),
-    lookDir: createDirection(0, 0),
+    location: createVector(x, y), 
+    direction: createVector(0, 0),
+    lookDir: createVector(0, 0),
     size
   };
 }
