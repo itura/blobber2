@@ -44,8 +44,8 @@ const mouseMoveHandler = digest => data => {
 
 const update = digest => data => {
   blobs.forEach(blob => {
-    blob.location.x = blob.location.x + blob.direction.x*5;
-    blob.location.y = blob.location.y + blob.direction.y*5;
+    blob.location.x = blob.location.x + blob.direction.x*40;
+    blob.location.y = blob.location.y + blob.direction.y*40;
     digest.add('move', {id: blob.id, location: blob.location});
   });
 };

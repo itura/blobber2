@@ -18,8 +18,6 @@ const style = function (x, y) {
     position: 'absolute',
     left: x,
     top: y,
-    //WebkitTransition: 'all .015s ease-out',
-    //transition: 'all .015s ease-out',
     overflow: 'visible',
     padding: 0,
     margin: 0
@@ -39,8 +37,8 @@ export const Blob = ({location, size}) => {
 
   // Adjust the coordinates left and up so that the circle is drawn
   // in the center of the canvas
-  const adjustedX = location.x - outerRadius;
-  const adjustedY = location.y - outerRadius;
+  const adjustedX = location.x - outerRadius + 5;
+  const adjustedY = location.y - outerRadius + 5;
 
   return (
     <div style={style(adjustedX, adjustedY)}>
