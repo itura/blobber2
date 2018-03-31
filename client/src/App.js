@@ -17,23 +17,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const spaceBar = KeyCombo(Keys.SPACE);
-
-    this.subscriptions = [
-      GameState.get('initialize').subscribe(this.initialize)
-
-      UserInput.get(spaceBar).subscribe(data => {
-        this.setState(prevState => {
-          return {
-            title: prevState.title + '!'
-          }
-        });
-      }),
-
-      // debug monitoring
-      //Observable.timer(1000, 2000)
-      //  .subscribe(value => console.log('blobs:', this.state.blobs.length, this.state.blobs.map(blob => blob.id)))
-    ];
+    this.subscriptions = [];
   }
 
   componentWillUnmount() {
