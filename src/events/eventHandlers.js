@@ -1,14 +1,14 @@
 const {blobs} = require('../gameState');
 const {createBlob, follow} = require('../models/blob');
-const {saveBlob} = require('../gameState');
+const {saveBlob, findBlob} = require('../gameState');
 
 const newPlayer = digest => data => {
-  const player = blobs.find(blob => blob.id === data.id);
+  const player = findBlob(data.id);
   digest.add('newPlayer', player);
 };
 
 const removeHandler = digest => data => {
-  const blob = blobs.find(blob => blob.id === data.id);
+  const blob = findBlob(data.id);
   if (blob) {
     blobs.splice(blobs.indexOf(blob), 1);
     digest.add('remove', data);
@@ -16,7 +16,7 @@ const removeHandler = digest => data => {
 };
 
 const directionHandler = digest => data => {
-  const blob = blobs.find(blob => blob.id === data.id);
+  const blob = findBlob(data.id);
   if (blob) {
     blob.direction.x = data.direction.x;
     blob.direction.y = data.direction.y;
@@ -24,7 +24,7 @@ const directionHandler = digest => data => {
 };
 
 const keyHandler = digest => data => {
-  blob = blobs.find(blob => blob.id === data.id);
+  blob = findBlob(data.id);
   if (blob) {
     console.log(data.keyEvent);
   };
@@ -35,7 +35,7 @@ const mouseClickHandler = digest => data => {
 };
 
 const mouseMoveHandler = digest => data => {
-  const blob = blobs.find(blob => blob.id === data.id);
+  const blob = findBlob(data.id);
   if (blob) {
     blob.lookDir.x = data.direction.x;
     blob.lookDir.y = data.direction.y;
