@@ -7,8 +7,11 @@ const containerStyle = {
   position: 'fixed',
   left: 0,
   bottom: 0,
+  zIndex: 998,
   padding: '1em',
   width: '20em',
+  fontFamily: 'Tahoma, Geneva, sans-serif',
+  fontSize: '14px'
 }
 
 const messagesStyle = {
@@ -18,7 +21,10 @@ const messagesStyle = {
 }
 
 const inputStyle = {
-  width: '100%'
+  width: '100%',
+  fontFamily: 'Tahoma, Geneva, sans-serif',
+  fontSize: '14px',
+  marginTop: '1em'
 }
 
 export class Chat extends Component {

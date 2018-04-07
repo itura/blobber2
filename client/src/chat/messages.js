@@ -10,7 +10,8 @@ const listStyle = {
 }
 
 const itemStyle = {
-  overFlowWrap: 'word-break'
+  overFlowWrap: 'word-break',
+  marginTop: '.2em'
 }
 
 function Message ({from, content}) {
