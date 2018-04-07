@@ -1,27 +1,25 @@
-const Jasmine = require('jasmine');
-const jasmine = new Jasmine();
-
+const Jasmine = require('jasmine')
+const jasmine = new Jasmine()
 
 jasmine.loadConfig({
-  spec_dir: "spec",
+  spec_dir: 'spec',
   spec_files: [
-    "**/*[sS]pec.js"
+    '**/*[sS]pec.js'
   ],
   helpers: [
-    "helpers/**/*.js"
+    'helpers/**/*.js'
   ],
   stopSpecOnExpectationFailure: false,
   random: true
-});
+})
 
 jasmine.onComplete(function (passed) {
   if (passed) {
-    console.log('All specs have passed!!');
+    console.log('All specs have passed!!')
+  } else {
+    console.log('At least one spec has failed!!')
   }
-  else {
-    console.log('At least one spec has failed!!');
-  }
-  jasmine.exitCodeCompletion(passed);
-});
+  jasmine.exitCodeCompletion(passed)
+})
 
-jasmine.execute();
+jasmine.execute()

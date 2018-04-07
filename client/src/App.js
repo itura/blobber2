@@ -1,13 +1,13 @@
-import React, {Component} from 'react';
-import './App.css';
-import {GameState} from './eventSources/gameState';
-import {MainPlayer} from './blobs/mainPlayer';
-import {SmolBlob} from './blobs/blob';
+import React, { Component } from 'react'
+import './App.css'
+import { GameState } from './eventSources/gameState'
+import { MainPlayer } from './blobs/mainPlayer'
+import { SmolBlob } from './blobs/blob'
 
 class App extends Component {
 
-  constructor() {
-    super();
+  constructor () {
+    super()
 
     this.state = {
       blobs: [],
@@ -15,68 +15,66 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.subscriptions = [
-    GameState.get('initialize').subscribe(this.initialize)
-    ];
+      GameState.get('initialize').subscribe(this.initialize)
+    ]
   }
 
-  componentWillUnmount() {
-    this.subscriptions.forEach(s => s.unsubscribe());
+  componentWillUnmount () {
+    this.subscriptions.forEach(s => s.unsubscribe())
   }
 
   initialize = data => {
     this.setState(prevState => ({
       blobs: data.blobs.filter(blob => blob.id !== data.id),
       mainPlayerId: data.id
-    }));
+    }))
 
     this.subscriptions.push(
       GameState.get('newPlayer').subscribe(this.addPlayer(data.id)),
       GameState.get('remove')
         .map(event => event.id)
         .subscribe(this.removePlayer))
-  };
+  }
 
   addPlayer = id => player => {
     this.setState(prevState => {
-      let blobs = prevState.blobs;
+      let blobs = prevState.blobs
 
       if (player.id !== id) {
-        blobs.push(player);
+        blobs.push(player)
       }
 
-      return {blobs};
-    });
-  };
+      return {blobs}
+    })
+  }
 
   removePlayer = id => {
     this.setState(prevState => {
-      const blob = prevState.blobs.find(blob => blob.id === id);
+      const blob = prevState.blobs.find(blob => blob.id === id)
       if (blob) {
-        const index = prevState.blobs.indexOf(blob);
+        const index = prevState.blobs.indexOf(blob)
         prevState.blobs.splice(index, 1)
         return {
           blobs: prevState.blobs
         }
       }
     })
-  };
+  }
 
-
-  render() {
+  render () {
     const blobComponents = this.state.blobs.map(blob => (
       <SmolBlob key={blob.id} id={blob.id} location={blob.location} size={blob.size}/>
-    ));
+    ))
 
     return (
       <div>
         <MainPlayer/>
         {blobComponents}
       </div>
-    );
+    )
   }
 }
 
-
-export default App;
+export default App
