@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
 import { GameState } from '../eventSources/gameState'
-import { List } from 'immutable'
-
-function Message ({from, content}) {
-  return <li><b>{from}</b>: {content}</li>
-}
+import { Messages } from './messages'
 
 export class Chat extends Component {
 
@@ -12,15 +8,26 @@ export class Chat extends Component {
     super()
 
     this.state = {
-      messages: List(),
       currentMessage: '',
-      playerId: null,
-      messageCount: 0,
+      playerId: null
     }
   }
 
   componentDidMount () {
     this.subs = [GameState.get('initialize').subscribe(this.initialize)]
+  }
+
+  render () {
+    return (
+      <div>
+        <Messages/>
+        <form onSubmit={this.submit}>
+          <input type="text"
+                 value={this.state.currentMessage}
+                 onChange={this.handleChange}/>
+        </form>
+      </div>
+    )
   }
 
   componentWillUnmount () {
@@ -30,31 +37,12 @@ export class Chat extends Component {
   initialize = data => {
     this.setState(prevState => ({
       playerId: data.id,
-      messages: prevState.messages.push(<Message key={prevState.messageCount}
-                                                 from={'server'}
-                                                 content={data.message}/>),
-      messageCount: prevState.messageCount + 1
     }))
-
-    this.subs.push(
-      GameState.get('chat').subscribe(this.newMessage),
-    )
-  }
-
-  newMessage = event => {
-    this.setState(prevState => {
-      return {
-        messages: prevState.messages.push(<Message key={prevState.messageCount}
-                                                   from={event.from}
-                                                   content={event.content}/>),
-        messageCount: prevState.messageCount + 1
-      }
-    })
   }
 
   submit = event => {
     event.preventDefault()
-    console.log('submit', event.target)
+    // console.log('submit', event.target)
 
     this.setState(prevState => {
       GameState.notify('chat', {
@@ -77,20 +65,5 @@ export class Chat extends Component {
         currentMessage: event.target.value,
       }
     })
-  }
-
-  render () {
-    return (
-      <div>
-        <ul>
-          {this.state.messages}
-        </ul>
-        <form onSubmit={this.submit}>
-          <input type="text"
-                 value={this.state.currentMessage}
-                 onChange={this.handleChange}/>
-        </form>
-      </div>
-    )
   }
 }
