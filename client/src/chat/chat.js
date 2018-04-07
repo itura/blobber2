@@ -3,6 +3,24 @@ import { GameState } from '../eventSources/gameState'
 import { Messages } from './messages'
 import { UserInput } from '../eventSources/userInput'
 
+const containerStyle = {
+  position: 'fixed',
+  left: 0,
+  bottom: 0,
+  padding: '1em',
+  width: '20em',
+}
+
+const messagesStyle = {
+  width: '100%',
+  height: '10em',
+  overflow: 'hidden'
+}
+
+const inputStyle = {
+  width: '100%'
+}
+
 export class Chat extends Component {
 
   constructor () {
@@ -22,9 +40,12 @@ export class Chat extends Component {
 
   render () {
     return (
-      <div>
-        <Messages/>
+      <div style={containerStyle}>
+        <div style={messagesStyle}>
+          <Messages/>
+        </div>
         <input ref={this.inputRef}
+               style={inputStyle}
                hidden={true}
                type="text"
                value={this.state.currentMessage}

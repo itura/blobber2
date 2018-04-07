@@ -2,12 +2,6 @@ import React, { Component } from 'react'
 import { GameState } from '../eventSources/gameState'
 import { List } from 'immutable'
 
-const containerStyle = {
-  width: '20em',
-  height: '10em',
-  overflow: 'hidden'
-}
-
 const listStyle = {
   width: '100%',
   height: '100%',
@@ -46,11 +40,9 @@ export class Messages extends Component {
 
   render () {
     return (
-      <div style={containerStyle}>
-        <div ref={this.listRef}
-            style={listStyle}>
-          {this.state.messages}
-        </div>
+      <div ref={this.listRef}
+           style={listStyle}>
+        {this.state.messages}
       </div>
     )
   }
