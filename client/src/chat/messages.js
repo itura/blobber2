@@ -2,13 +2,29 @@ import React, { Component } from 'react'
 import { GameState } from '../eventSources/gameState'
 import { List } from 'immutable'
 
-function Message ({from, content}) {
-  return <li><b>{from}</b>: {content}</li>
+const containerStyle = {
+  width: '20em',
+  height: '10em',
+  overflow: 'hidden'
 }
 
 const listStyle = {
-  height: '10em',
-  overflow: 'scroll',
+  width: '100%',
+  height: '100%',
+  overflowY: 'scroll',
+  paddingRight: '17px'
+}
+
+const itemStyle = {
+  overFlowWrap: 'word-break'
+}
+
+function Message ({from, content}) {
+  return (
+    <div style={itemStyle}>
+      <b>{from}</b>: {content}
+    </div>
+  )
 }
 
 export class Messages extends Component {
@@ -30,10 +46,12 @@ export class Messages extends Component {
 
   render () {
     return (
-      <ul ref={this.listRef}
-          style={listStyle}>
-        {this.state.messages}
-      </ul>
+      <div style={containerStyle}>
+        <div ref={this.listRef}
+            style={listStyle}>
+          {this.state.messages}
+        </div>
+      </div>
     )
   }
 
@@ -67,7 +85,7 @@ export class Messages extends Component {
   }
 
   scrollToBottom = () => {
-    const messageList = this.listRef.current;
+    const messageList = this.listRef.current
     const scrollHeight = messageList.scrollHeight
     const height = messageList.clientHeight
     const maxScrollTop = scrollHeight - height
