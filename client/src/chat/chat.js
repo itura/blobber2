@@ -25,6 +25,7 @@ export class Chat extends Component {
       <div>
         <Messages/>
         <input ref={this.inputRef}
+               hidden={true}
                type="text"
                value={this.state.currentMessage}
                onChange={this.handleChange}/>
@@ -44,24 +45,30 @@ export class Chat extends Component {
     this.subs.push(
       UserInput.startTyping().subscribe(this.startTyping),
       UserInput.stopTyping()
-        .filter(value => this.state.currentMessage.length > 0)
         .subscribe(this.submit)
     )
   }
 
   startTyping = () => {
+    this.inputRef.current.hidden = false
     this.inputRef.current.focus()
   }
 
   submit = () => {
-    this.inputRef.current.blur()
+    this.inputRef.current.hidden = true
     this.setState(prevState => {
-      GameState.notify('chat', {
-        from: this.state.playerId,
-        content: this.state.currentMessage,
-      })
+      let newState = {typing: false}
 
-      return {currentMessage: ''}
+      if (prevState.currentMessage.length > 0) {
+        GameState.notify('chat', {
+          from: prevState.playerId,
+          content: prevState.currentMessage,
+        })
+
+        newState = Object.assign(newState, {currentMessage: ''})
+      }
+
+      return newState
     })
   }
 
@@ -70,9 +77,15 @@ export class Chat extends Component {
     event.persist()
 
     this.setState(prevState => {
-      return {
-        currentMessage: event.target.value,
+      let newState = {}
+
+      if (prevState.currentMessage.length <= 140) {
+        newState = Object.assign(newState, {
+          currentMessage: event.target.value
+        })
       }
+
+      return newState
     })
   }
 }

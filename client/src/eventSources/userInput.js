@@ -104,6 +104,7 @@ function createUserInput () {
     }
   }
 
+  // todo find a better way to do this
   userInput.get(KeyCombos.TYPE).subscribe(event => {
     isTyping = !isTyping
     isTyping$.next(isTyping)
