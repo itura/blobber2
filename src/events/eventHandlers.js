@@ -42,13 +42,17 @@ const mouseMoveHandler = digest => data => {
   }
 };
 
-const update = digest => data => {
+const updateAll = digest => data => {
   blobs.forEach(blob => {
     blob.location.x = blob.location.x + blob.direction.x*5;
     blob.location.y = blob.location.y + blob.direction.y*5;
     digest.add('move', {id: blob.id, location: blob.location});
   });
 };
+
+const chat = digest => data => {
+  digest.add('chat', data);
+}
 
 const eventHandlers = [
   ['newPlayer', newPlayer],
@@ -57,7 +61,8 @@ const eventHandlers = [
   ['keyEvent', keyHandler],
   ['mouseClick', mouseClickHandler],
   ['mouseMove', mouseMoveHandler],
-  ['updateAll', update]
+  ['updateAll', updateAll],
+  ['chat', chat]
 ];
 
 module.exports = {
