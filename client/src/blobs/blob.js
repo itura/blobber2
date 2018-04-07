@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
-import {GameState} from '../eventSources/gameState';
+import React, { Component } from 'react'
+import { GameState } from '../eventSources/gameState'
 
 export const Vector = {
-  create(x = 0, y = 0) {
-    return {x, y};
+  create (x = 0, y = 0) {
+    return {x, y}
   }
-};
+}
 
 const style = function (x, y, zIndex) {
   return {
@@ -17,25 +17,25 @@ const style = function (x, y, zIndex) {
     margin: 0,
     zIndex: zIndex
   }
-};
+}
 
 export const Blob = ({location, size, top}) => {
-  const baseRadius = (size / 2);
-  const strokeWidth = 5;
+  const baseRadius = (size / 2)
+  const strokeWidth = 5
 
   if (baseRadius <= strokeWidth) {
-    return null;
+    return null
   }
 
-  const innerRadius = baseRadius - strokeWidth;
-  const outerRadius = baseRadius + strokeWidth;
+  const innerRadius = baseRadius - strokeWidth
+  const outerRadius = baseRadius + strokeWidth
 
   // Adjust the coordinates left and up so that the circle is drawn
   // in the center of the canvas
-  const adjustedX = location.x - outerRadius;
-  const adjustedY = location.y - outerRadius;
+  const adjustedX = location.x - outerRadius
+  const adjustedY = location.y - outerRadius
 
-  const zIndex = top ? 99 : 0;
+  const zIndex = top ? 99 : 0
 
   return (
     <div style={style(adjustedX, adjustedY, zIndex)}>
@@ -44,11 +44,11 @@ export const Blob = ({location, size, top}) => {
       </svg>
     </div>
   )
-};
+}
 
 export class SmolBlob extends Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
 
     this.state = {
       id: props.id,
@@ -57,25 +57,25 @@ export class SmolBlob extends Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.subscriptions = [
       GameState.get('move', this.state.id)
         .map(event => event.location)
         .subscribe(this.move)
-    ];
+    ]
   }
 
-  componentWillUnMount() {
-    this.subscriptions.forEach(s => s.unsubscribe());
+  componentWillUnMount () {
+    this.subscriptions.forEach(s => s.unsubscribe())
   }
 
   move = newLocation => {
     this.setState(prevState => ({
       location: newLocation,
-    }));
-  };
+    }))
+  }
 
-  render() {
+  render () {
     return (
       <Blob location={this.state.location} size={this.state.size}/>
     )
