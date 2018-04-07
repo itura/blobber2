@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { GameState } from '../eventSources/gameState'
 import { Messages } from './messages'
+import { UserInput } from '../eventSources/userInput'
 
 export class Chat extends Component {
 
@@ -11,6 +12,8 @@ export class Chat extends Component {
       currentMessage: '',
       playerId: null
     }
+
+    this.inputRef = React.createRef()
   }
 
   componentDidMount () {
@@ -21,11 +24,10 @@ export class Chat extends Component {
     return (
       <div>
         <Messages/>
-        <form onSubmit={this.submit}>
-          <input type="text"
-                 value={this.state.currentMessage}
-                 onChange={this.handleChange}/>
-        </form>
+        <input ref={this.inputRef}
+               type="text"
+               value={this.state.currentMessage}
+               onChange={this.handleChange}/>
       </div>
     )
   }
@@ -38,21 +40,28 @@ export class Chat extends Component {
     this.setState(prevState => ({
       playerId: data.id,
     }))
+
+    this.subs.push(
+      UserInput.startTyping().subscribe(this.startTyping),
+      UserInput.stopTyping()
+        .filter(value => this.state.currentMessage.length > 0)
+        .subscribe(this.submit)
+    )
   }
 
-  submit = event => {
-    event.preventDefault()
-    // console.log('submit', event.target)
+  startTyping = () => {
+    this.inputRef.current.focus()
+  }
 
+  submit = () => {
+    this.inputRef.current.blur()
     this.setState(prevState => {
       GameState.notify('chat', {
         from: this.state.playerId,
         content: this.state.currentMessage,
       })
 
-      return {
-        currentMessage: '',
-      }
+      return {currentMessage: ''}
     })
   }
 
