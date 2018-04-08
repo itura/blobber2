@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { GameState } from '../eventSources/gameState'
+import { ServerEvents } from '../eventSources/serverEvents'
 import { map } from 'rxjs/operators'
 
 export const Vector = {
@@ -60,7 +60,7 @@ export class SmolBlob extends Component {
 
   componentDidMount () {
     this.subscriptions = [
-      GameState.get('move', this.state.id)
+      ServerEvents.get('move', this.state.id)
         .pipe(map(event => event.location))
         .subscribe(this.move)]
   }

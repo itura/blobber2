@@ -42,4 +42,4 @@ function createGameState () {
   }
 }
 
-export const GameState = createGameState()
+export const ServerEvents = createGameState()
