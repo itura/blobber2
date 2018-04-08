@@ -7,6 +7,10 @@ export const Vector = {
   }
 }
 
+export function round(value, decimals) {
+  return Number(Math.round(value+'e'+decimals)+'e-'+decimals)
+}
+
 const style = function (x, y, zIndex) {
   return {
     position: 'absolute',
@@ -59,7 +63,7 @@ export class SmolBlob extends Component {
 
   componentDidMount () {
     this.subscriptions = [
-      GameState.get('move', this.state.id)
+      GameState.get('pm', this.state.id)
         .map(event => event.location)
         .subscribe(this.move)
     ]

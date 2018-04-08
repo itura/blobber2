@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { UserInput, Directions } from '../eventSources/userInput'
 import { GameState } from '../eventSources/gameState'
-import { Blob, Vector } from './blob'
+import { Blob, Vector, round } from './blob'
 
 export class MainPlayer extends Component {
   constructor () {
@@ -17,7 +17,7 @@ export class MainPlayer extends Component {
 
   componentDidMount () {
     this.subscriptions = [
-      GameState.get('initialize').subscribe(this.initialize)
+      GameState.get('init').subscribe(this.initialize)
     ]
   }
 
@@ -33,7 +33,7 @@ export class MainPlayer extends Component {
     }))
 
     this.subscriptions.push(
-      GameState.get('move', data.id)
+      GameState.get('pm', data.id)
         .map(event => event.location)
         .subscribe(this.move),
       UserInput.mouseMove().subscribe(this.mouseHandle(data.id)),
@@ -52,18 +52,18 @@ export class MainPlayer extends Component {
     })
     if (newDirection !== this.location) {
       const mag = Math.sqrt((newDirection.x * newDirection.x) + (newDirection.y * newDirection.y))
-      newDirection.x = newDirection.x / mag
-      newDirection.y = newDirection.y / mag
-      GameState.notify('updateDirection', {id: id, direction: newDirection})
+      newDirection.x = round(newDirection.x / mag, 3)
+      newDirection.y = round(newDirection.y / mag, 3)
+      GameState.notify('ud', {id: id, direction: newDirection})
     }
   }
 
   mouseHandle = id => location => {
     const newLookDirection = Vector.create()
     const mag = Math.sqrt((location.x * location.x) + (location.y * location.y))
-    newLookDirection.x = location.x / mag
-    newLookDirection.y = location.y / mag
-    GameState.notify('mouseMove', {id: id, direction: newLookDirection})
+    newLookDirection.x = round(location.x / mag, 3)
+    newLookDirection.y = round(location.y / mag, 3)
+    GameState.notify('mm', {id: id, direction: newLookDirection})
   }
 
   clickHandle = id => location => {
