@@ -22,13 +22,12 @@ function saveBlob (blob) {
   return blob
 }
 
-function findBlob(id) {
-  const found = blobs.find(blob => blob.id === data.id);
+function findBlob (id) {
+  const found = blobs.find(blob => blob.id === id)
   if (found) {
-    return found;
-  }
-  else {
-    return false;
+    return found
+  } else {
+    return false
   }
 }
 
