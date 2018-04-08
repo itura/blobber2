@@ -27,7 +27,7 @@ function init (log) {
   })
 
   // We will process these events when a client sends them
-  const clientEvents = ['updateDirection']
+  const clientEvents = ['updateDirection', 'chat']
 
   // configure websockets
   io.on('connection', socket => {
@@ -39,7 +39,7 @@ function init (log) {
     })
 
     // create a new player
-    const player = saveBlob(createBlob(100, 100, 100))
+    const player = saveBlob(createBlob(500, 500, 100))
     log(`User ${player.id} connected.`)
 
     // initialize the client
@@ -47,7 +47,8 @@ function init (log) {
       id: player.id,
       location: player.location,
       size: player.size,
-      blobs: blobs
+      blobs: blobs,
+      message: 'Welcome to Blobber 2!'
     })
 
     // route known events coming in on this socket to the main event bus

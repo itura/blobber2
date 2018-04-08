@@ -3,6 +3,7 @@ import './App.css'
 import { GameState } from './eventSources/gameState'
 import { MainPlayer } from './blobs/mainPlayer'
 import { SmolBlob } from './blobs/blob'
+import { Chat } from './chat/chat'
 
 class App extends Component {
 
@@ -72,6 +73,7 @@ class App extends Component {
       <div>
         <MainPlayer/>
         {blobComponents}
+        <Chat/>
       </div>
     )
   }

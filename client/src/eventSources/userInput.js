@@ -1,10 +1,12 @@
 import { Observable } from 'rxjs'
+import { Subject } from 'rxjs/Subject'
 import { Vector } from '../blobs/blob'
 import { Set } from 'immutable'
 
 export const Keys = {
   SPACE: 32,
   SHIFT: 16,
+  ENTER: 13,
   CONTROL: 17,
   ALT: 18,
   SUPER: 91,
@@ -16,6 +18,10 @@ export const Keys = {
   I: 73,
   C: 67,
   M: 77
+}
+
+export const KeyCombos = {
+  TYPE: KeyCombo(Keys.ENTER)
 }
 
 export const Directions = {
@@ -39,6 +45,12 @@ function KeyPressEvent (keyCombo) {
 
 function createUserInput () {
   let currentKeyCombo = KeyCombo()
+  let isTyping = false
+  const isTyping$ = new Subject()
+
+  Observable.fromEvent(window, 'blur').subscribe(event => {
+    currentKeyCombo = currentKeyCombo.clear()
+  })
 
   const keyDown = Observable.fromEvent(window, 'keydown')
     .map(event => currentKeyCombo.add(event.keyCode))
@@ -65,7 +77,7 @@ function createUserInput () {
   const mouseDown = Observable.fromEvent(window, 'mousedown')
     .share()
 
-  return {
+  const userInput = {
     mouseMove () {
       return mouseMove
     },
@@ -75,7 +87,15 @@ function createUserInput () {
     },
 
     keyPress () {
-      return keyDown.merge(keyUp)
+      return keyDown.merge(keyUp).filter(() => !isTyping)
+    },
+
+    startTyping () {
+      return isTyping$.filter(isTyping => isTyping)
+    },
+
+    stopTyping () {
+      return isTyping$.filter(isTyping => !isTyping)
     },
 
     get (keyCombo) {
@@ -83,6 +103,14 @@ function createUserInput () {
         .filter(event => event.keyCombo().equals(keyCombo))
     }
   }
+
+  // todo find a better way to do this
+  userInput.get(KeyCombos.TYPE).subscribe(event => {
+    isTyping = !isTyping
+    isTyping$.next(isTyping)
+  })
+
+  return userInput
 }
 
 export const UserInput = createUserInput()
