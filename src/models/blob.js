@@ -1,4 +1,4 @@
-const {createVector} = require('./position')
+const {createVector} = require('./vector')
 const {Observable} = require('rxjs')
 const {eventBus} = require('../events/eventBus')
 

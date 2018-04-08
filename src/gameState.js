@@ -22,8 +22,19 @@ function saveBlob (blob) {
   return blob
 }
 
+function findBlob(id) {
+  const found = blobs.find(blob => blob.id === data.id);
+  if (found) {
+    return found;
+  }
+  else {
+    return false;
+  }
+}
+
 module.exports = {
   createDigest,
   blobs,
-  saveBlob
+  saveBlob,
+  findBlob
 }
