@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { UserInput, Directions } from '../eventSources/userInput'
+import { Directions, UserInput } from '../eventSources/userInput'
 import { GameState } from '../eventSources/gameState'
 import { Blob, Vector } from './blob'
+import { map } from 'rxjs/operators'
 
 export class MainPlayer extends Component {
   constructor () {
@@ -34,7 +35,7 @@ export class MainPlayer extends Component {
 
     this.subscriptions.push(
       GameState.get('move', data.id)
-        .map(event => event.location)
+        .pipe(map(event => event.location))
         .subscribe(this.move),
       UserInput.mouseMove().subscribe(this.mouseHandle(data.id)),
       UserInput.mouseDown().subscribe(this.clickHandle(data.id)),

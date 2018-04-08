@@ -4,6 +4,7 @@ import { GameState } from './eventSources/gameState'
 import { MainPlayer } from './blobs/mainPlayer'
 import { SmolBlob } from './blobs/blob'
 import { Chat } from './chat/chat'
+import { map } from 'rxjs/operators'
 
 class App extends Component {
 
@@ -33,9 +34,11 @@ class App extends Component {
     }))
 
     this.subscriptions.push(
-      GameState.get('newPlayer').subscribe(this.addPlayer(data.id)),
+      GameState.get('newPlayer')
+        .subscribe(this.addPlayer(data.id)),
       GameState.get('remove')
-        .map(event => event.id)
+        .pipe(
+          map(event => event.id))
         .subscribe(this.removePlayer))
   }
 

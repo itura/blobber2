@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { GameState } from '../eventSources/gameState'
 import { Messages } from './messages'
 import { UserInput } from '../eventSources/userInput'
+import { filter } from 'rxjs/operators'
 
 const containerStyle = {
   position: 'fixed',
@@ -70,8 +71,9 @@ export class Chat extends Component {
     }))
 
     this.subs.push(
-      UserInput.startTyping().subscribe(this.startTyping),
-      UserInput.stopTyping()
+      UserInput.isTyping().pipe(filter(isTyping => isTyping))
+        .subscribe(this.startTyping),
+      UserInput.isTyping().pipe(filter(isTyping => !isTyping))
         .subscribe(this.submit)
     )
   }

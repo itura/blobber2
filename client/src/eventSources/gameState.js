@@ -1,5 +1,6 @@
 import openSocket from 'socket.io-client'
 import { Subject } from 'rxjs'
+import { filter, map } from 'rxjs/operators'
 
 export function Event (type, data) {
   return {type, data}
@@ -21,18 +22,15 @@ function createGameState () {
     socket.on(type, data => bus.next(Event(type, data)))
   })
 
-  function filterBy (type) {
-    return bus
-      .filter(event => event.type === type)
-      .map(event => event.data)
-  }
-
   return {
     get (type, id = null) {
-      let source = filterBy(type)
+      let source = bus.pipe(
+        filter(event => event.type === type),
+        map(event => event.data)
+      )
 
       if (id) {
-        source = source.filter(event => event.id === id)
+        source = source.pipe(filter(event => event.id === id))
       }
 
       return source

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { GameState } from '../eventSources/gameState'
+import { map } from 'rxjs/operators'
 
 export const Vector = {
   create (x = 0, y = 0) {
@@ -60,9 +61,8 @@ export class SmolBlob extends Component {
   componentDidMount () {
     this.subscriptions = [
       GameState.get('move', this.state.id)
-        .map(event => event.location)
-        .subscribe(this.move)
-    ]
+        .pipe(map(event => event.location))
+        .subscribe(this.move)]
   }
 
   componentWillUnMount () {
