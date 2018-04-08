@@ -1,17 +1,18 @@
 const {blobs} = require('../gameState')
 const {createBlob, follow} = require('../models/blob')
 const {saveBlob, findBlob} = require('../gameState')
+const { round } = require('../models/vector')
 
 const newPlayer = digest => data => {
   const player = findBlob(data.id)
-  digest.add('newPlayer', player)
+  digest.add('np', player)
 }
 
 const removeHandler = digest => data => {
   const blob = findBlob(data.id)
   if (blob) {
     blobs.splice(blobs.indexOf(blob), 1)
-    digest.add('remove', data)
+    digest.add('rv', data)
   }
 }
 
@@ -44,24 +45,26 @@ const mouseMoveHandler = digest => data => {
 
 const updateAll = digest => data => {
   blobs.forEach(blob => {
-    blob.location.x = blob.location.x + blob.direction.x * 5
-    blob.location.y = blob.location.y + blob.direction.y * 5
-    digest.add('move', {id: blob.id, location: blob.location})
+    if ((blob.direction.x != null) || (blob.direction.y != null)) {
+      blob.location.x = round(blob.location.x + blob.direction.x * 5, 2)
+      blob.location.y = round(blob.location.y + blob.direction.y * 5, 2)
+      digest.add('pm', {id: blob.id, location: blob.location})
+    }
   })
 }
 
 const chat = digest => data => {
-  digest.add('chat', data)
+  digest.add('ch', data)
 }
 
 const eventHandlers = [
-  ['newPlayer', newPlayer],
-  ['remove', removeHandler],
-  ['updateDirection', directionHandler],
-  ['mouseClick', mouseClickHandler],
-  ['mouseMove', mouseMoveHandler],
-  ['updateAll', updateAll],
-  ['chat', chat]
+  ['np', newPlayer],
+  ['rv', removeHandler],
+  ['ud', directionHandler],
+  ['mc', mouseClickHandler],
+  ['mm', mouseMoveHandler],
+  ['updateAll', updateAll], //updateAll is actually just an internal command so we don't need to shorten it unless we want to
+  ['ch', chat]
 ]
 
 module.exports = {

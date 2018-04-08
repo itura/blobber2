@@ -41,7 +41,7 @@ export class Chat extends Component {
   }
 
   componentDidMount () {
-    this.subs = [GameState.get('initialize').subscribe(this.initialize)]
+    this.subs = [GameState.get('init').subscribe(this.initialize)]
   }
 
   render () {
@@ -87,7 +87,7 @@ export class Chat extends Component {
       let newState = {typing: false}
 
       if (prevState.currentMessage.length > 0) {
-        GameState.notify('chat', {
+        GameState.notify('ch', {
           from: prevState.playerId,
           content: prevState.currentMessage,
         })

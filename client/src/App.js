@@ -18,7 +18,7 @@ class App extends Component {
 
   componentDidMount () {
     this.subscriptions = [
-      GameState.get('initialize').subscribe(this.initialize)
+      GameState.get('init').subscribe(this.initialize)
     ]
   }
 
@@ -33,8 +33,8 @@ class App extends Component {
     }))
 
     this.subscriptions.push(
-      GameState.get('newPlayer').subscribe(this.addPlayer(data.id)),
-      GameState.get('remove')
+      GameState.get('np').subscribe(this.addPlayer(data.id)),
+      GameState.get('rv')
         .map(event => event.id)
         .subscribe(this.removePlayer))
   }

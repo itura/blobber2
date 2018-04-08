@@ -27,13 +27,13 @@ function init (log) {
   })
 
   // We will process these events when a client sends them
-  const clientEvents = ['updateDirection', 'chat']
+  const clientEvents = ['ud', 'ch']
 
   // configure websockets
   io.on('connection', socket => {
     socket.on('disconnect', () => {
       log(`User ${player.id} disconnected.`)
-      eventBus.put('remove', {
+      eventBus.put('rv', {
         id: player.id
       })
     })
@@ -43,7 +43,7 @@ function init (log) {
     log(`User ${player.id} connected.`)
 
     // initialize the client
-    socket.emit('initialize', {
+    socket.emit('init', {
       id: player.id,
       location: player.location,
       size: player.size,
@@ -57,7 +57,7 @@ function init (log) {
     }))
 
     // let the world know what just happened!
-    eventBus.put('newPlayer', player)
+    eventBus.put('np', player)
   })
 
   // Some error handling. It's unlikely that these will occur but when they do we want

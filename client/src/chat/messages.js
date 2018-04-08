@@ -36,7 +36,7 @@ export class Messages extends Component {
   }
 
   componentDidMount () {
-    this.subs = [GameState.get('initialize').subscribe(this.initialize)]
+    this.subs = [GameState.get('init').subscribe(this.initialize)]
   }
 
   render () {
@@ -61,7 +61,7 @@ export class Messages extends Component {
     }))
 
     this.subs.push(
-      GameState.get('chat').subscribe(this.newMessage),
+      GameState.get('ch').subscribe(this.newMessage),
     )
   }
 
