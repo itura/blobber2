@@ -1,0 +1,15 @@
+===============
+Client Commands
+===============
+'ud' : 'update direction'
+'ch' : 'chat'
+'mm' : 'mouse move'
+'mc' : 'mouse click'
+
+===============
+Server Commands
+===============
+'pm' : 'player move'
+'np' : 'new player'
+'rv' : 'remove player'
+
