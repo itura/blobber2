@@ -1,4 +1,4 @@
-const {init} = require('../src/server');
+const {init} = require('../src/server/server');
 const openSocket = require('socket.io-client');
 const {Observable, Subject} = require('rxjs');
 const { filter, map, take, first } = require('rxjs/operators');
