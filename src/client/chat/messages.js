@@ -23,13 +23,12 @@ function Message ({from, content}) {
 }
 
 export class Messages extends Component {
-
   constructor () {
     super()
 
     this.state = {
       messages: List(),
-      messageCount: 0,
+      messageCount: 0
     }
 
     this.listRef = React.createRef()
@@ -42,7 +41,7 @@ export class Messages extends Component {
   render () {
     return (
       <div ref={this.listRef}
-           style={listStyle}>
+        style={listStyle}>
         {this.state.messages}
       </div>
     )
@@ -55,13 +54,13 @@ export class Messages extends Component {
   initialize = data => {
     this.setState(prevState => ({
       messages: prevState.messages.push(<Message key={prevState.messageCount}
-                                                 from={'server'}
-                                                 content={data.message}/>),
-      messageCount: prevState.messageCount + 1,
+        from={'server'}
+        content={data.message} />),
+      messageCount: prevState.messageCount + 1
     }))
 
     this.subs.push(
-      GameState.get('ch').subscribe(this.newMessage),
+      GameState.get('ch').subscribe(this.newMessage)
     )
   }
 
@@ -69,9 +68,9 @@ export class Messages extends Component {
     this.setState(prevState => {
       return {
         messages: prevState.messages.push(<Message key={prevState.messageCount}
-                                                   from={event.from}
-                                                   content={event.content}/>),
-        messageCount: prevState.messageCount + 1,
+          from={event.from}
+          content={event.content} />),
+        messageCount: prevState.messageCount + 1
       }
     })
     this.scrollToBottom()

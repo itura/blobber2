@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { UserInput, Directions } from '../eventSources/userInput'
+import { Directions, UserInput } from '../eventSources/userInput'
 import { GameState } from '../eventSources/gameState'
-import { Blob, Vector, round } from './blob'
+import { Blob, round, Vector } from './blob'
 
 export class MainPlayer extends Component {
   constructor () {
@@ -11,7 +11,7 @@ export class MainPlayer extends Component {
       id: 0,
       location: Vector.create(),
       lookDir: Vector.create(),
-      size: 0.
+      size: 0.0
     }
   }
 
@@ -41,7 +41,7 @@ export class MainPlayer extends Component {
       UserInput.keyPress().subscribe(this.handleKeyPress(data.id))
     )
   }
-  //User Input Handlers
+  // User Input Handlers
   handleKeyPress = id => event => {
     const newDirection = Vector.create()
     event.keyCombo().forEach(keyCode => {
@@ -67,10 +67,10 @@ export class MainPlayer extends Component {
   }
 
   clickHandle = id => location => {
-    //pass
+    // pass
   }
 
-  //Server Command Handlers
+  // Server Command Handlers
   move = newPosition => {
     this.setState(prevState => ({location: newPosition}))
   }
@@ -81,7 +81,7 @@ export class MainPlayer extends Component {
 
   render () {
     return (
-      <Blob location={this.state.location} size={this.state.size} top={true}/>
+      <Blob location={this.state.location} size={this.state.size} top />
     )
   }
 }

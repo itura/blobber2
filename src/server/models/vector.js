@@ -1,4 +1,4 @@
-function createVector (x, y) {
+export function createVector (x, y) {
   return {
     x,
     y,
@@ -8,11 +8,6 @@ function createVector (x, y) {
   }
 }
 
-function round(value, decimals) {
-  return Number(Math.round(value+'e'+decimals)+'e-'+decimals)
-}
-
-module.exports = {
-  createVector,
-  round
+export function round (value, decimals) {
+  return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals)
 }

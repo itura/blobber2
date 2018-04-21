@@ -6,7 +6,6 @@ import { SmolBlob } from './blobs/blob'
 import { Chat } from './chat/chat'
 
 class App extends Component {
-
   constructor () {
     super()
 
@@ -66,14 +65,14 @@ class App extends Component {
 
   render () {
     const blobComponents = this.state.blobs.map(blob => (
-      <SmolBlob key={blob.id} id={blob.id} location={blob.location} size={blob.size}/>
+      <SmolBlob key={blob.id} id={blob.id} location={blob.location} size={blob.size} />
     ))
 
     return (
       <div>
-        <MainPlayer/>
+        <MainPlayer />
         {blobComponents}
-        <Chat/>
+        <Chat />
       </div>
     )
   }

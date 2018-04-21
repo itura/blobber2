@@ -1,7 +1,5 @@
-const {blobs} = require('../gameState')
-const {createBlob, follow} = require('../models/blob')
-const {saveBlob, findBlob} = require('../gameState')
-const { round } = require('../models/vector')
+import { blobs, findBlob } from '../gameState'
+import { round } from '../models/vector'
 
 const newPlayer = digest => data => {
   const player = findBlob(data.id)
@@ -21,13 +19,6 @@ const directionHandler = digest => data => {
   if (blob) {
     blob.direction.x = data.direction.x
     blob.direction.y = data.direction.y
-  }
-}
-
-const keyHandler = digest => data => {
-  const blob = findBlob(data.id)
-  if (blob) {
-    console.log(data.keyEvent)
   }
 }
 
@@ -57,16 +48,12 @@ const chat = digest => data => {
   digest.add('ch', data)
 }
 
-const eventHandlers = [
+export const eventHandlers = [
   ['np', newPlayer],
   ['rv', removeHandler],
   ['ud', directionHandler],
   ['mc', mouseClickHandler],
   ['mm', mouseMoveHandler],
-  ['updateAll', updateAll], //updateAll is actually just an internal command so we don't need to shorten it unless we want to
+  ['updateAll', updateAll], // updateAll is actually just an internal command so we don't need to shorten it unless we want to
   ['ch', chat]
 ]
-
-module.exports = {
-  eventHandlers
-}

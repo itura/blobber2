@@ -7,8 +7,8 @@ export const Vector = {
   }
 }
 
-export function round(value, decimals) {
-  return Number(Math.round(value+'e'+decimals)+'e-'+decimals)
+export function round (value, decimals) {
+  return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals)
 }
 
 const style = function (x, y, zIndex) {
@@ -44,7 +44,7 @@ export const Blob = ({location, size, top}) => {
   return (
     <div style={style(adjustedX, adjustedY, zIndex)}>
       <svg width={size} height={size}>
-        <circle cx={baseRadius} cy={baseRadius} r={innerRadius} stroke="navy" strokeWidth={strokeWidth} fill="blue"/>
+        <circle cx={baseRadius} cy={baseRadius} r={innerRadius} stroke='navy' strokeWidth={strokeWidth} fill='blue' />
       </svg>
     </div>
   )
@@ -75,13 +75,13 @@ export class SmolBlob extends Component {
 
   move = newLocation => {
     this.setState(prevState => ({
-      location: newLocation,
+      location: newLocation
     }))
   }
 
   render () {
     return (
-      <Blob location={this.state.location} size={this.state.size}/>
+      <Blob location={this.state.location} size={this.state.size} />
     )
   }
 }

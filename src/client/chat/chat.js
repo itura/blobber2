@@ -28,7 +28,6 @@ const inputStyle = {
 }
 
 export class Chat extends Component {
-
   constructor () {
     super()
 
@@ -48,14 +47,14 @@ export class Chat extends Component {
     return (
       <div style={containerStyle}>
         <div style={messagesStyle}>
-          <Messages/>
+          <Messages />
         </div>
         <input ref={this.inputRef}
-               style={inputStyle}
-               hidden={true}
-               type="text"
-               value={this.state.currentMessage}
-               onChange={this.handleChange}/>
+          style={inputStyle}
+          hidden
+          type='text'
+          value={this.state.currentMessage}
+          onChange={this.handleChange} />
       </div>
     )
   }
@@ -66,7 +65,7 @@ export class Chat extends Component {
 
   initialize = data => {
     this.setState(prevState => ({
-      playerId: data.id,
+      playerId: data.id
     }))
 
     this.subs.push(
@@ -89,7 +88,7 @@ export class Chat extends Component {
       if (prevState.currentMessage.length > 0) {
         GameState.notify('ch', {
           from: prevState.playerId,
-          content: prevState.currentMessage,
+          content: prevState.currentMessage
         })
 
         newState = Object.assign(newState, {currentMessage: ''})
