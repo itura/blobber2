@@ -6,9 +6,9 @@
   "scripts": {
     "fix": "standard --parser babel-eslint --fix",
     "buildClient": "webpack --config config/webpack.config.client.js",
-    "watchClient": "nodemon -w src/client/ --exec \"yarn buildClient\"",
+    "watchClient": "nodemon -w src/client/ -w src/shared/ --exec \"yarn buildClient\"",
     "buildServer": "webpack --config config/webpack.config.server.js",
-    "watchServer": "nodemon -w src/server/ --exec \"yarn buildServer; node dist/server.js\"",
+    "watchServer": "nodemon -w src/server/ -w src/shared/ --exec \"yarn buildServer; node dist/server.js\"",
     "dev": "concurrently -n 'server,client,linter' --kill-others-on-fail \"yarn watchServer\" \"yarn watchClient\" \"standard --parser babel-eslint\" "
   },
   "devDependencies": {
