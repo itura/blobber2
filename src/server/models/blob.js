@@ -1,4 +1,4 @@
-import { createVector } from './vector'
+import { createVector } from '../../shared/vector'
 
 let newId = 0
 

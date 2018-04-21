@@ -1,12 +1,6 @@
 import React, { Component } from 'react'
 import { ServerEvents } from '../events/serverEvents'
 
-export const Vector = {
-  create (x = 0, y = 0) {
-    return {x, y}
-  }
-}
-
 export function round (value, decimals) {
   return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals)
 }

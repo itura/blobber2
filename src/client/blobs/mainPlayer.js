@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Directions, UserInput } from '../events/userInput'
 import { ServerEvents } from '../events/serverEvents'
-import { Blob, round, Vector } from './blob'
+import { Blob, round } from './blob'
+import { createVector } from '../../shared/vector'
 
 export class MainPlayer extends Component {
   constructor () {
@@ -9,8 +10,8 @@ export class MainPlayer extends Component {
 
     this.state = {
       id: 0,
-      location: Vector.create(),
-      lookDir: Vector.create(),
+      location: createVector(0, 0),
+      lookDir: createVector(0, 0),
       size: 0.0
     }
   }
@@ -43,7 +44,7 @@ export class MainPlayer extends Component {
   }
   // User Input Handlers
   handleKeyPress = id => event => {
-    const newDirection = Vector.create()
+    const newDirection = createVector(0, 0)
     event.keyCombo().forEach(keyCode => {
       if (keyCode in Directions) {
         newDirection.x = newDirection.x + Directions[keyCode].x
@@ -59,7 +60,7 @@ export class MainPlayer extends Component {
   }
 
   mouseHandle = id => location => {
-    const newLookDirection = Vector.create()
+    const newLookDirection = createVector(0, 0)
     const mag = Math.sqrt((location.x * location.x) + (location.y * location.y))
     newLookDirection.x = round(location.x / mag, 3)
     newLookDirection.y = round(location.y / mag, 3)
@@ -81,7 +82,7 @@ export class MainPlayer extends Component {
 
   render () {
     return (
-      <Blob location={this.state.location} size={this.state.size} top />
+      <Blob location={this.state.location} size={this.state.size} top/>
     )
   }
 }
