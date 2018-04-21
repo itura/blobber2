@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { ServerEvents } from '../eventSources/serverEvents'
+import { ServerEvents } from '../events/serverEvents'
 import { Messages } from './messages'
-import { UserInput } from '../eventSources/userInput'
+import { UserInput } from '../events/userInput'
 
 const containerStyle = {
   position: 'fixed',

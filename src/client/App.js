@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './App.css'
-import { ServerEvents } from './eventSources/serverEvents'
+import { ServerEvents } from './events/serverEvents'
 import { MainPlayer } from './blobs/mainPlayer'
 import { SmolBlob } from './blobs/blob'
 import { Chat } from './chat/chat'

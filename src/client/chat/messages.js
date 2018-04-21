@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ServerEvents } from '../eventSources/serverEvents'
+import { ServerEvents } from '../events/serverEvents'
 import { List } from 'immutable'
 
 const listStyle = {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Directions, UserInput } from '../eventSources/userInput'
-import { ServerEvents } from '../eventSources/serverEvents'
+import { Directions, UserInput } from '../events/userInput'
+import { ServerEvents } from '../events/serverEvents'
 import { Blob, round, Vector } from './blob'
 
 export class MainPlayer extends Component {
