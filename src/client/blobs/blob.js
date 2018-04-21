@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
 import { ServerEvents } from '../events/serverEvents'
 
-export function round (value, decimals) {
-  return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals)
-}
-
 const style = function (x, y, zIndex) {
   return {
     position: 'absolute',

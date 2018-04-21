@@ -1,5 +1,5 @@
 import { blobs, findBlob } from '../gameState'
-import { round } from '../models/vector'
+import { round } from '../../shared/util'
 
 const newPlayer = digest => data => {
   const player = findBlob(data.id)
