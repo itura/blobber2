@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { GameState } from '../eventSources/gameState'
+import { ServerEvents } from '../eventSources/serverEvents'
 import { List } from 'immutable'
 
 const listStyle = {
@@ -35,7 +35,7 @@ export class Messages extends Component {
   }
 
   componentDidMount () {
-    this.subs = [GameState.get('init').subscribe(this.initialize)]
+    this.subs = [ServerEvents.get('init').subscribe(this.initialize)]
   }
 
   render () {
@@ -60,7 +60,7 @@ export class Messages extends Component {
     }))
 
     this.subs.push(
-      GameState.get('ch').subscribe(this.newMessage)
+      ServerEvents.get('ch').subscribe(this.newMessage)
     )
   }
 

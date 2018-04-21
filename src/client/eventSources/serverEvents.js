@@ -6,7 +6,7 @@ export function Event (type, data) {
   return {type, data}
 }
 
-function createGameState () {
+function createServerEvents () {
   const bus$ = new Subject()
   const socket = openSocket('http://localhost:5000/', {
     reconnection: false
@@ -41,4 +41,4 @@ function createGameState () {
   }
 }
 
-export const GameState = createGameState()
+export const ServerEvents = createServerEvents()

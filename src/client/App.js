@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './App.css'
-import { GameState } from './eventSources/gameState'
+import { ServerEvents } from './eventSources/serverEvents'
 import { MainPlayer } from './blobs/mainPlayer'
 import { SmolBlob } from './blobs/blob'
 import { Chat } from './chat/chat'
@@ -17,7 +17,7 @@ class App extends Component {
 
   componentDidMount () {
     this.subscriptions = [
-      GameState.get('init').subscribe(this.initialize)
+      ServerEvents.get('init').subscribe(this.initialize)
     ]
   }
 
@@ -32,8 +32,8 @@ class App extends Component {
     }))
 
     this.subscriptions.push(
-      GameState.get('np').subscribe(this.addPlayer(data.id)),
-      GameState.get('rv')
+      ServerEvents.get('np').subscribe(this.addPlayer(data.id)),
+      ServerEvents.get('rv')
         .map(event => event.id)
         .subscribe(this.removePlayer))
   }

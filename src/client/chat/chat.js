@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { GameState } from '../eventSources/gameState'
+import { ServerEvents } from '../eventSources/serverEvents'
 import { Messages } from './messages'
 import { UserInput } from '../eventSources/userInput'
 
@@ -40,7 +40,7 @@ export class Chat extends Component {
   }
 
   componentDidMount () {
-    this.subs = [GameState.get('init').subscribe(this.initialize)]
+    this.subs = [ServerEvents.get('init').subscribe(this.initialize)]
   }
 
   render () {
@@ -86,7 +86,7 @@ export class Chat extends Component {
       let newState = {typing: false}
 
       if (prevState.currentMessage.length > 0) {
-        GameState.notify('ch', {
+        ServerEvents.notify('ch', {
           from: prevState.playerId,
           content: prevState.currentMessage
         })

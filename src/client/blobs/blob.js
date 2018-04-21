@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { GameState } from '../eventSources/gameState'
+import { ServerEvents } from '../eventSources/serverEvents'
 
 export const Vector = {
   create (x = 0, y = 0) {
@@ -63,7 +63,7 @@ export class SmolBlob extends Component {
 
   componentDidMount () {
     this.subscriptions = [
-      GameState.get('pm', this.state.id)
+      ServerEvents.get('pm', this.state.id)
         .map(event => event.location)
         .subscribe(this.move)
     ]
