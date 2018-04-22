@@ -1,7 +1,11 @@
 {
-  "name": "blobber3",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "blobber2",
+  "version": "0.1.1",
+  "description": "Sequel to the smash hit blobber",
+  "authors": [
+    "austin.w.garrard@gmail.com",
+    "danwbyrne@gmail.com"
+  ],
   "license": "MIT",
   "scripts": {
     "fix": "standard --parser babel-eslint --fix",
