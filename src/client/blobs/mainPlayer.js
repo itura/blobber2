@@ -4,6 +4,7 @@ import { ServerEvents } from '../events/serverEvents'
 import { Blob } from './blob'
 import { round } from '../../shared/util'
 import { createVector } from '../../shared/vector'
+import { Events } from '../../shared/events'
 
 export class MainPlayer extends Component {
   constructor () {
@@ -56,7 +57,7 @@ export class MainPlayer extends Component {
       const mag = Math.sqrt((newDirection.x * newDirection.x) + (newDirection.y * newDirection.y))
       newDirection.x = round(newDirection.x / mag, 3)
       newDirection.y = round(newDirection.y / mag, 3)
-      ServerEvents.notify('ud', {id: id, direction: newDirection})
+      ServerEvents.notify(Events.UPDATE_DIRECTION.with({id: id, direction: newDirection}))
     }
   }
 
@@ -65,7 +66,7 @@ export class MainPlayer extends Component {
     const mag = Math.sqrt((location.x * location.x) + (location.y * location.y))
     newLookDirection.x = round(location.x / mag, 3)
     newLookDirection.y = round(location.y / mag, 3)
-    ServerEvents.notify('mm', {id: id, direction: newLookDirection})
+    ServerEvents.notify(Events.MOUSE_MOVE.with({id: id, direction: newLookDirection}))
   }
 
   clickHandle = id => location => {
@@ -83,7 +84,7 @@ export class MainPlayer extends Component {
 
   render () {
     return (
-      <Blob location={this.state.location} size={this.state.size} top/>
+      <Blob location={this.state.location} size={this.state.size} top />
     )
   }
 }

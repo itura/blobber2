@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { ServerEvents } from '../events/serverEvents'
 import { Messages } from './messages'
 import { UserInput } from '../events/userInput'
+import { Events } from '../../shared/events'
 
 const containerStyle = {
   position: 'fixed',
@@ -86,10 +87,10 @@ export class Chat extends Component {
       let newState = {typing: false}
 
       if (prevState.currentMessage.length > 0) {
-        ServerEvents.notify('ch', {
+        ServerEvents.notify(Events.CHAT.with({
           from: prevState.playerId,
           content: prevState.currentMessage
-        })
+        }))
 
         newState = Object.assign(newState, {currentMessage: ''})
       }

@@ -4,8 +4,8 @@ export function createDigest (output) {
   let events = []
 
   return {
-    add (...event) {
-      events.push(event)
+    add (event) {
+      events.push(event.type, event.data)
     },
 
     send () {

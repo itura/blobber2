@@ -6,16 +6,13 @@ import { timer } from 'rxjs/observable/timer'
 import { eventBus } from './events/eventBus'
 import { createBlob } from './models/blob'
 import { blobs, createDigest, saveBlob } from './gameState'
-import { eventHandlers } from './events/eventHandlers'
+import { eventHandlerSetups } from './events/eventHandlers'
 
 const app = Express()
 app.use(Express.static('public'))
 
 const server = Server(app)
 const io = SocketIo(server)
-
-// my idea right here is to handle movement here on the digest. What we'll do is
-// handle moving players blobs here in the timer. it could work, going to back up before trying
 
 export function init (log) {
 // Establish update loop
@@ -26,9 +23,7 @@ export function init (log) {
   })
 
   // Set up handlers to consume events from the bus and update the digest
-  eventHandlers.forEach(([name, handler]) => {
-    eventBus.get(name).subscribe(handler(digest))
-  })
+  eventHandlerSetups.forEach(setup => setup(eventBus, digest))
 
   // We will process these events when a client sends them
   const clientEvents = ['ud', 'ch']

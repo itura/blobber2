@@ -2,10 +2,6 @@ import openSocket from 'socket.io-client'
 import { filter } from 'rxjs/operators'
 import { createObservableSocket } from '../../shared/observableSocket'
 
-export function Event (type, data) {
-  return {type, data}
-}
-
 const filterByIdIfGiven = id => source$ => id
   ? source$.pipe(filter(event => event.id === id))
   : source$
@@ -24,8 +20,8 @@ function createServerEvents () {
       return os.on(type, filterByIdIfGiven(id))
     },
 
-    notify (type, data) {
-      os.emit(type, data)
+    notify (event) {
+      os.emit(event.type, event.data)
     }
   }
 }
