@@ -7,7 +7,7 @@ export function LockedSubject () {
   const locked$ = new BehaviorSubject(false)
 
   return Object.assign(locked$, {
-    lock (key$) {
+    lock () {
       if (locked) {
         return false
       }
@@ -19,13 +19,29 @@ export function LockedSubject () {
         this.next(false)
       }
 
+      const key$ = new Subject()
       key$.subscribe({
         next: finish,
         complete: finish,
         error: finish
       })
 
-      return true
+      return key$
+    },
+
+    observer () {
+      let key$ = null
+
+      return {
+        next: () => {
+          if (key$) {
+            key$.complete()
+            key$ = null
+          } else {
+            key$ = this.lock()
+          }
+        }
+      }
     }
   })
 }

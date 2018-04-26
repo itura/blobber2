@@ -4,7 +4,6 @@ import { fromEvent } from 'rxjs/observable/fromEvent'
 import { merge } from 'rxjs/observable/merge'
 import { filter, map, sampleTime, share, tap } from 'rxjs/operators'
 import { LockedSubject, unless } from '../../shared/subjects'
-import { Subject } from 'rxjs/Subject'
 
 export const Keys = {
   SPACE: 32,
@@ -102,18 +101,9 @@ function createUserInput () {
     }
   }
 
-  let isTyping = false
-  const key$ = new Subject()
-  keyDown$.pipe(
-    filter(event => event.keyCombo().equals(KeyCombos.TYPE))
-  ).subscribe(event => {
-    if (isTyping) {
-      key$.next()
-    } else {
-      isTyping$.lock(key$)
-    }
-    isTyping = !isTyping
-  })
+  keyDown$
+    .pipe(filter(event => event.keyCombo().equals(KeyCombos.TYPE)))
+    .subscribe(isTyping$.observer())
 
   return userInput
 }
