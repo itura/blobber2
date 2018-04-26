@@ -76,7 +76,6 @@ export class MainPlayer extends Component {
 
   // Server Command Handlers
   move = newPosition => {
-    console.log('move', newPosition)
     this.setState(prevState => ({location: newPosition}))
   }
 

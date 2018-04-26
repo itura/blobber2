@@ -1,7 +1,8 @@
 import { createVector } from '../../shared/vector'
 import { Set } from 'immutable'
 import { fromEvent } from 'rxjs/observable/fromEvent'
-import { filter, map, merge, sampleTime, tap } from 'rxjs/operators'
+import { merge } from 'rxjs/observable/merge'
+import { filter, map, sampleTime, share, tap } from 'rxjs/operators'
 import { LockedSubject, unless } from '../../shared/subjects'
 import { Subject } from 'rxjs/Subject'
 
@@ -53,44 +54,43 @@ function createUserInput () {
     currentKeyCombo = currentKeyCombo.clear()
   })
 
-  const keyDown = fromEvent(window, 'keydown').pipe(
+  const keyDown$ = fromEvent(window, 'keydown').pipe(
     map(event => currentKeyCombo.add(event.keyCode)),
     filter(newKeyCombo => !newKeyCombo.equals(currentKeyCombo)),
     tap(newKeyCombo => { currentKeyCombo = newKeyCombo }),
-    map(newKeyCombo => KeyPressEvent(newKeyCombo))
+    map(newKeyCombo => KeyPressEvent(newKeyCombo)),
+    share()
   )
 
-  const keyUp = fromEvent(window, 'keyup').pipe(
+  const keyUp$ = fromEvent(window, 'keyup').pipe(
     map(event => currentKeyCombo.remove(event.keyCode)),
     tap(newKeyCombo => { currentKeyCombo = newKeyCombo }),
-    map(newKeyCombo => KeyPressEvent(newKeyCombo))
+    map(newKeyCombo => KeyPressEvent(newKeyCombo)),
+    share()
   )
 
   fromEvent(window, 'keyup').subscribe(event => {
     currentKeyCombo = currentKeyCombo.delete(event.keyCode)
   })
 
-  const mouseMove = fromEvent(window, 'mousemove').pipe(
+  const mouseMove$ = fromEvent(window, 'mousemove').pipe(
     sampleTime(100),
     map(event => createVector(event.clientX, event.clientY))
   )
 
-  const mouseDown = fromEvent(window, 'mousedown')
+  const mouseDown$ = fromEvent(window, 'mousedown')
 
   const userInput = {
     mouseMove () {
-      return mouseMove
+      return mouseMove$
     },
 
     mouseDown () {
-      return mouseDown
+      return mouseDown$
     },
 
     keyPress () {
-      return keyDown.pipe(
-        merge(keyUp),
-        unless(isTyping$)
-      )
+      return merge(keyDown$, keyUp$).pipe(unless(isTyping$))
     },
 
     startTyping () {
@@ -99,18 +99,14 @@ function createUserInput () {
 
     stopTyping () {
       return isTyping$.pipe(filter(isTyping => !isTyping))
-    },
-
-    get (keyCombo) {
-      return keyDown.pipe(
-        filter(event => event.keyCombo().equals(keyCombo)))
     }
   }
 
-  // todo find a better way to do this
   let isTyping = false
   const key$ = new Subject()
-  userInput.get(KeyCombos.TYPE).subscribe(event => {
+  keyDown$.pipe(
+    filter(event => event.keyCombo().equals(KeyCombos.TYPE))
+  ).subscribe(event => {
     if (isTyping) {
       key$.next()
     } else {
