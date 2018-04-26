@@ -1,7 +1,9 @@
-import { Observable } from 'rxjs'
-import { Subject } from 'rxjs/Subject'
 import { createVector } from '../../shared/vector'
 import { Set } from 'immutable'
+import { fromEvent } from 'rxjs/observable/fromEvent'
+import { filter, map, merge, sampleTime, tap } from 'rxjs/operators'
+import { LockedSubject, unless } from '../../shared/subjects'
+import { Subject } from 'rxjs/Subject'
 
 export const Keys = {
   SPACE: 32,
@@ -45,37 +47,35 @@ function KeyPressEvent (keyCombo) {
 
 function createUserInput () {
   let currentKeyCombo = KeyCombo()
-  let isTyping = false
-  const isTyping$ = new Subject()
+  const isTyping$ = LockedSubject()
 
-  Observable.fromEvent(window, 'blur').subscribe(event => {
+  fromEvent(window, 'blur').subscribe(event => {
     currentKeyCombo = currentKeyCombo.clear()
   })
 
-  const keyDown = Observable.fromEvent(window, 'keydown')
-    .map(event => currentKeyCombo.add(event.keyCode))
-    .filter(newKeyCombo => !newKeyCombo.equals(currentKeyCombo))
-    .do(newKeyCombo => { currentKeyCombo = newKeyCombo })
-    .map(newKeyCombo => KeyPressEvent(newKeyCombo))
-    .share()
+  const keyDown = fromEvent(window, 'keydown').pipe(
+    map(event => currentKeyCombo.add(event.keyCode)),
+    filter(newKeyCombo => !newKeyCombo.equals(currentKeyCombo)),
+    tap(newKeyCombo => { currentKeyCombo = newKeyCombo }),
+    map(newKeyCombo => KeyPressEvent(newKeyCombo))
+  )
 
-  const keyUp = Observable.fromEvent(window, 'keyup')
-    .map(event => currentKeyCombo.remove(event.keyCode))
-    .do(newKeyCombo => { currentKeyCombo = newKeyCombo })
-    .map(newKeyCombo => KeyPressEvent(newKeyCombo))
-    .share()
+  const keyUp = fromEvent(window, 'keyup').pipe(
+    map(event => currentKeyCombo.remove(event.keyCode)),
+    tap(newKeyCombo => { currentKeyCombo = newKeyCombo }),
+    map(newKeyCombo => KeyPressEvent(newKeyCombo))
+  )
 
-  Observable.fromEvent(window, 'keyup').subscribe(event => {
+  fromEvent(window, 'keyup').subscribe(event => {
     currentKeyCombo = currentKeyCombo.delete(event.keyCode)
   })
 
-  const mouseMove = Observable.fromEvent(window, 'mousemove')
-    .sampleTime(100)
-    .map(event => createVector(event.clientX, event.clientY))
-    .share()
+  const mouseMove = fromEvent(window, 'mousemove').pipe(
+    sampleTime(100),
+    map(event => createVector(event.clientX, event.clientY))
+  )
 
-  const mouseDown = Observable.fromEvent(window, 'mousedown')
-    .share()
+  const mouseDown = fromEvent(window, 'mousedown')
 
   const userInput = {
     mouseMove () {
@@ -87,27 +87,36 @@ function createUserInput () {
     },
 
     keyPress () {
-      return keyDown.merge(keyUp).filter(() => !isTyping)
+      return keyDown.pipe(
+        merge(keyUp),
+        unless(isTyping$)
+      )
     },
 
     startTyping () {
-      return isTyping$.filter(isTyping => isTyping)
+      return isTyping$.pipe(filter(isTyping => isTyping))
     },
 
     stopTyping () {
-      return isTyping$.filter(isTyping => !isTyping)
+      return isTyping$.pipe(filter(isTyping => !isTyping))
     },
 
     get (keyCombo) {
-      return keyDown
-        .filter(event => event.keyCombo().equals(keyCombo))
+      return keyDown.pipe(
+        filter(event => event.keyCombo().equals(keyCombo)))
     }
   }
 
   // todo find a better way to do this
+  let isTyping = false
+  const key$ = new Subject()
   userInput.get(KeyCombos.TYPE).subscribe(event => {
+    if (isTyping) {
+      key$.next()
+    } else {
+      isTyping$.lock(key$)
+    }
     isTyping = !isTyping
-    isTyping$.next(isTyping)
   })
 
   return userInput

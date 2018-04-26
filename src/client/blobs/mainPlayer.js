@@ -5,6 +5,7 @@ import { Blob } from './blob'
 import { round } from '../../shared/util'
 import { createVector } from '../../shared/vector'
 import { Events } from '../../shared/events'
+import { map } from 'rxjs/operators'
 
 export class MainPlayer extends Component {
   constructor () {
@@ -36,8 +37,8 @@ export class MainPlayer extends Component {
     }))
 
     this.subscriptions.push(
-      ServerEvents.get(Events.PLAYER_MOVE, data.id)
-        .map(event => event.location)
+      ServerEvents.get(Events.PLAYER_MOVE, data.id).pipe(
+        map(event => event.location))
         .subscribe(this.move),
       UserInput.mouseMove().subscribe(this.mouseHandle(data.id)),
       UserInput.mouseDown().subscribe(this.clickHandle(data.id)),

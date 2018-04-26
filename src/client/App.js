@@ -5,6 +5,7 @@ import { MainPlayer } from './blobs/mainPlayer'
 import { SmolBlob } from './blobs/blob'
 import { Chat } from './chat/chat'
 import { Events } from '../shared/events'
+import { map } from 'rxjs/operators'
 
 class App extends Component {
   constructor () {
@@ -33,9 +34,10 @@ class App extends Component {
     }))
 
     this.subscriptions.push(
-      ServerEvents.get(Events.NEW_PLAYER).subscribe(this.addPlayer(data.id)),
-      ServerEvents.get(Events.REMOVE_PLAYER)
-        .map(event => event.id)
+      ServerEvents.get(Events.NEW_PLAYER)
+        .subscribe(this.addPlayer(data.id)),
+      ServerEvents.get(Events.REMOVE_PLAYER).pipe(
+        map(event => event.id))
         .subscribe(this.removePlayer))
   }
 

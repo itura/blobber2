@@ -1,5 +1,7 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin')
 const path = require('path')
+const rxPaths = require('rxjs/_esm2015/path-mapping')
+const webpack = require('webpack')
 
 module.exports = {
   mode: 'development',
@@ -9,6 +11,10 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../public'),
     filename: 'bundle.js'
+  },
+  resolve: {
+    // Use the "alias" key to resolve to an ESM distribution
+    alias: rxPaths()
   },
   module: {
     rules: [{
@@ -33,6 +39,7 @@ module.exports = {
       template: './src/client/assets/index.html',
       filename: 'index.html',
       favicon: 'src/client/assets/favicon.ico'
-    })
+    }),
+    new webpack.optimize.ModuleConcatenationPlugin()
   ]
 }
