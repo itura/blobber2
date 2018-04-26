@@ -16,8 +16,8 @@ function createServerEvents () {
   })
 
   return {
-    get (type, id = null) {
-      return os.on(type, filterByIdIfGiven(id))
+    get (event, id = null) {
+      return os.on(event.type, filterByIdIfGiven(id))
     },
 
     notify (event) {

@@ -18,6 +18,7 @@ export const Events = {
   MOUSE_CLICK: Event('mc'),
   PLAYER_MOVE: Event('pm'),
   NEW_PLAYER: Event('np'),
-  REMOVE_PLAYER: Event('np'),
-  UPDATE_ALL: Event('updateAll')
+  REMOVE_PLAYER: Event('rv'),
+  UPDATE_ALL: Event('updateAll'),
+  INIT: Event('init')
 }

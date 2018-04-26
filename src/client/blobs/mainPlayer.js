@@ -20,7 +20,7 @@ export class MainPlayer extends Component {
 
   componentDidMount () {
     this.subscriptions = [
-      ServerEvents.get('init').subscribe(this.initialize)
+      ServerEvents.get(Events.INIT).subscribe(this.initialize)
     ]
   }
 
@@ -36,7 +36,7 @@ export class MainPlayer extends Component {
     }))
 
     this.subscriptions.push(
-      ServerEvents.get('pm', data.id)
+      ServerEvents.get(Events.PLAYER_MOVE, data.id)
         .map(event => event.location)
         .subscribe(this.move),
       UserInput.mouseMove().subscribe(this.mouseHandle(data.id)),
@@ -75,6 +75,7 @@ export class MainPlayer extends Component {
 
   // Server Command Handlers
   move = newPosition => {
+    console.log('move', newPosition)
     this.setState(prevState => ({location: newPosition}))
   }
 

@@ -1,22 +1,22 @@
-import { blobs, findBlob } from '../gameState'
+import { BlobsRepository } from '../gameState'
 import { round } from '../../shared/util'
 import { Events } from '../../shared/events'
 
 const newPlayer = digest => data => {
-  const player = findBlob(data.id)
+  const player = BlobsRepository.find(data.id)
   digest.add(Events.NEW_PLAYER.with(player))
 }
 
 const removeHandler = digest => data => {
-  const blob = findBlob(data.id)
+  const blob = BlobsRepository.find(data.id)
   if (blob) {
-    blobs.splice(blobs.indexOf(blob), 1)
+    BlobsRepository.remove(blob)
     digest.add(Events.REMOVE_PLAYER.with(data))
   }
 }
 
 const directionHandler = digest => data => {
-  const blob = findBlob(data.id)
+  const blob = BlobsRepository.find(data.id)
   if (blob) {
     blob.direction.x = data.direction.x
     blob.direction.y = data.direction.y
@@ -28,7 +28,7 @@ const mouseClickHandler = digest => data => {
 }
 
 const mouseMoveHandler = digest => data => {
-  const blob = findBlob(data.id)
+  const blob = BlobsRepository.find(data.id)
   if (blob) {
     blob.lookDir.x = data.direction.x
     blob.lookDir.y = data.direction.y
@@ -36,7 +36,7 @@ const mouseMoveHandler = digest => data => {
 }
 
 const updateAll = digest => data => {
-  blobs.forEach(blob => {
+  BlobsRepository.forEach(blob => {
     if ((blob.direction.x != null) || (blob.direction.y != null)) {
       blob.location.x = round(blob.location.x + blob.direction.x * 5, 2)
       blob.location.y = round(blob.location.y + blob.direction.y * 5, 2)
@@ -53,7 +53,7 @@ const chat = digest => data => {
 }
 
 const setupHandler = (event, handler) => (eventBus, digest) => {
-  eventBus.get(event.type).subscribe(handler(digest))
+  eventBus.get(event).subscribe(handler(digest))
 }
 
 export const eventHandlerSetups = [

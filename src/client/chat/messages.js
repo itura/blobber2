@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { ServerEvents } from '../events/serverEvents'
 import { List } from 'immutable'
+import { Events } from '../../shared/events'
 
 const listStyle = {
   width: '100%',
@@ -35,7 +36,7 @@ export class Messages extends Component {
   }
 
   componentDidMount () {
-    this.subs = [ServerEvents.get('init').subscribe(this.initialize)]
+    this.subs = [ServerEvents.get(Events.INIT).subscribe(this.initialize)]
   }
 
   render () {
@@ -60,7 +61,7 @@ export class Messages extends Component {
     }))
 
     this.subs.push(
-      ServerEvents.get('ch').subscribe(this.newMessage)
+      ServerEvents.get(Events.CHAT).subscribe(this.newMessage)
     )
   }
 

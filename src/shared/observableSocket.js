@@ -46,7 +46,7 @@ export function createObservableSocket (socket, ...config) {
     .map(
       operator => ({
         [operator.name]: function (type, ...args) {
-          return this.get(type, operator(...args))
+          return this.on(type, operator(...args))
         }
       })
     )

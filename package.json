@@ -13,6 +13,7 @@
     "watchClient": "nodemon -w src/client/ -w src/shared/ --exec \"yarn buildClient\"",
     "buildServer": "webpack --config config/webpack.config.server.js",
     "watchServer": "nodemon -w src/server/ -w src/shared/ --exec \"yarn buildServer; node dist/server.js\"",
+    "build": "concurrently -n 'client,server' --kill-others-on-fail \"yarn buildClient\" \"yarn buildServer\"",
     "dev": "concurrently -n 'server,client,linter' --kill-others-on-fail \"yarn watchServer\" \"yarn watchClient\" \"standard --parser babel-eslint\" "
   },
   "devDependencies": {

@@ -5,28 +5,41 @@ export function createDigest (output) {
 
   return {
     add (event) {
-      events.push(event.type, event.data)
+      events.push(event)
     },
 
     send () {
-      events.forEach(event => output.emit(...event))
+      events.forEach(event => output.emit(event.type, event.data))
       events = []
     }
   }
 }
 
-export const blobs = []
+function createBlobsRepository () {
+  const blobs = []
 
-export function saveBlob (blob) {
-  blobs.push(blob)
-  return blob
-}
+  return {
+    find (id) {
+      return blobs.find(blob => blob.id === id) || false
+    },
 
-export function findBlob (id) {
-  const found = blobs.find(blob => blob.id === id)
-  if (found) {
-    return found
-  } else {
-    return false
+    save (blob) {
+      blobs.push(blob)
+      return blob
+    },
+
+    remove (blob) {
+      blobs.splice(blobs.indexOf(blob), 1)
+    },
+
+    forEach (fn) {
+      blobs.forEach(fn)
+    },
+
+    all () {
+      return blobs
+    }
   }
 }
+
+export const BlobsRepository = createBlobsRepository()

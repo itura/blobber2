@@ -7,15 +7,15 @@ function createEventBus () {
   const source$ = new Subject()
 
   return {
-    get (type) {
+    get (event) {
       return source$.pipe(
-        filter(event => event.type === type),
-        map(event => event.data)
+        filter(_event => _event.type === event.type),
+        map(_event => _event.data)
       )
     },
 
-    put (type, data) {
-      source$.next({type, data})
+    put (event) {
+      source$.next(event)
     }
   }
 }

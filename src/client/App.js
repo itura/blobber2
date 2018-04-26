@@ -4,6 +4,7 @@ import { ServerEvents } from './events/serverEvents'
 import { MainPlayer } from './blobs/mainPlayer'
 import { SmolBlob } from './blobs/blob'
 import { Chat } from './chat/chat'
+import { Events } from '../shared/events'
 
 class App extends Component {
   constructor () {
@@ -17,7 +18,7 @@ class App extends Component {
 
   componentDidMount () {
     this.subscriptions = [
-      ServerEvents.get('init').subscribe(this.initialize)
+      ServerEvents.get(Events.INIT).subscribe(this.initialize)
     ]
   }
 
@@ -32,8 +33,8 @@ class App extends Component {
     }))
 
     this.subscriptions.push(
-      ServerEvents.get('np').subscribe(this.addPlayer(data.id)),
-      ServerEvents.get('rv')
+      ServerEvents.get(Events.NEW_PLAYER).subscribe(this.addPlayer(data.id)),
+      ServerEvents.get(Events.REMOVE_PLAYER)
         .map(event => event.id)
         .subscribe(this.removePlayer))
   }

@@ -41,7 +41,7 @@ export class Chat extends Component {
   }
 
   componentDidMount () {
-    this.subs = [ServerEvents.get('init').subscribe(this.initialize)]
+    this.subs = [ServerEvents.get(Events.INIT).subscribe(this.initialize)]
   }
 
   render () {

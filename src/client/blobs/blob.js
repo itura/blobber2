@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { ServerEvents } from '../events/serverEvents'
+import { Events } from '../../shared/events'
 
 const style = function (x, y, zIndex) {
   return {
@@ -53,7 +54,7 @@ export class SmolBlob extends Component {
 
   componentDidMount () {
     this.subscriptions = [
-      ServerEvents.get('pm', this.state.id)
+      ServerEvents.get(Events.PLAYER_MOVE, this.state.id)
         .map(event => event.location)
         .subscribe(this.move)
     ]
