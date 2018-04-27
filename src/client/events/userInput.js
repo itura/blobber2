@@ -3,7 +3,7 @@ import { Set } from 'immutable'
 import { fromEvent } from 'rxjs/observable/fromEvent'
 import { merge } from 'rxjs/observable/merge'
 import { filter, map, sampleTime, share, tap } from 'rxjs/operators'
-import { LockedSubject, unless } from '../../shared/subjects'
+import { LockedSubject, ToggleSubject, unless } from '../../shared/subjects'
 
 export const Keys = {
   SPACE: 32,
@@ -47,7 +47,9 @@ function KeyPressEvent (keyCombo) {
 
 function createUserInput () {
   let currentKeyCombo = KeyCombo()
-  const isTyping$ = LockedSubject()
+  const isTyping$ = ToggleSubject(false)
+  const isLocked$ = LockedSubject()
+  isTyping$.subscribe(isLocked$.observer())
 
   fromEvent(window, 'blur').subscribe(event => {
     currentKeyCombo = currentKeyCombo.clear()
@@ -80,6 +82,8 @@ function createUserInput () {
   const mouseDown$ = fromEvent(window, 'mousedown')
 
   const userInput = {
+    isTyping$: isTyping$,
+
     mouseMove () {
       return mouseMove$
     },
@@ -89,21 +93,13 @@ function createUserInput () {
     },
 
     keyPress () {
-      return merge(keyDown$, keyUp$).pipe(unless(isTyping$))
-    },
-
-    startTyping () {
-      return isTyping$.pipe(filter(isTyping => isTyping))
-    },
-
-    stopTyping () {
-      return isTyping$.pipe(filter(isTyping => !isTyping))
+      return merge(keyDown$, keyUp$).pipe(unless(isLocked$))
     }
   }
 
   keyDown$
     .pipe(filter(event => event.keyCombo().equals(KeyCombos.TYPE)))
-    .subscribe(isTyping$.observer())
+    .subscribe(isTyping$)
 
   return userInput
 }

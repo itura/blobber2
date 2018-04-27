@@ -70,10 +70,7 @@ export class Chat extends Component {
     }))
 
     this.subs.push(
-      UserInput.startTyping()
-        .subscribe(this.startTyping),
-      UserInput.stopTyping()
-        .subscribe(this.submit)
+      UserInput.isTyping$.subscribeWith(this.startTyping, this.submit)
     )
   }
 

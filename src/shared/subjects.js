@@ -78,9 +78,3 @@ export function ToggleSubject (initial = true) {
     }
   })
 }
-
-export const toggle = toggle$ => source$ => source$.pipe(
-  withLatestFrom(toggle$),
-  filter(([event, enabled]) => !enabled),
-  map(([event, enabled]) => event)
-)
