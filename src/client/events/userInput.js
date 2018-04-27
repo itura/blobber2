@@ -83,17 +83,13 @@ function createUserInput () {
 
   const userInput = {
     isTyping$: isTyping$,
-
-    mouseMove () {
-      return mouseMove$
-    },
-
-    mouseDown () {
-      return mouseDown$
-    },
+    mouseMove$: mouseMove$,
+    mouseDown$: mouseDown$,
 
     keyPress () {
-      return merge(keyDown$, keyUp$).pipe(unless(isLocked$))
+      return merge(keyDown$, keyUp$).pipe(
+        unless(isLocked$)
+      )
     }
   }
 

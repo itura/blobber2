@@ -7,6 +7,7 @@ export function LockedSubject () {
   const locked$ = new BehaviorSubject(false)
 
   return Object.assign(locked$, {
+
     lock () {
       if (locked) {
         return false
@@ -14,19 +15,12 @@ export function LockedSubject () {
 
       this.next(true)
 
-      const finish = () => {
+      const unlock = () => {
         locked = false
         this.next(false)
       }
 
-      const key$ = new Subject()
-      key$.subscribe({
-        next: finish,
-        complete: finish,
-        error: finish
-      })
-
-      return key$
+      return createKey(unlock)
     },
 
     observer () {
@@ -35,7 +29,7 @@ export function LockedSubject () {
       return {
         next: () => {
           if (key$) {
-            key$.complete()
+            key$.next()
             key$ = null
           } else {
             key$ = this.lock()
@@ -46,6 +40,18 @@ export function LockedSubject () {
   })
 }
 
+function createKey (finish) {
+  const key$ = new Subject()
+
+  key$.subscribe({
+    next: finish,
+    complete: finish,
+    error: finish
+  })
+
+  return key$
+}
+
 export const unless = locked$ => source$ => source$.pipe(
   withLatestFrom(locked$),
   filter(([event, locked]) => !locked),
@@ -54,7 +60,7 @@ export const unless = locked$ => source$ => source$.pipe(
 
 export function ToggleSubject (initial = true) {
   let enabled = initial
-  const enabled$ = new Subject(initial)
+  const enabled$ = new Subject()
   const _next = enabled$.next
 
   return Object.assign(enabled$, {
@@ -68,13 +74,13 @@ export function ToggleSubject (initial = true) {
     },
 
     subscribeWith (onEnabled, onDisabled) {
-      this.pipe(
-        filter(value => value === true)
-      ).subscribe(onEnabled)
+      return [
+        this.pipe(filter(value => value === true))
+          .subscribe(onEnabled),
 
-      this.pipe(
-        filter(value => value === false)
-      ).subscribe(onDisabled)
+        this.pipe(filter(value => value === false))
+          .subscribe(onDisabled)
+      ]
     }
   })
 }

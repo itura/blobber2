@@ -40,8 +40,8 @@ export class MainPlayer extends Component {
       ServerEvents.get(Events.PLAYER_MOVE, data.id).pipe(
         map(event => event.location))
         .subscribe(this.move),
-      UserInput.mouseMove().subscribe(this.mouseHandle(data.id)),
-      UserInput.mouseDown().subscribe(this.clickHandle(data.id)),
+      UserInput.mouseMove$.subscribe(this.mouseHandle(data.id)),
+      UserInput.mouseDown$.subscribe(this.clickHandle(data.id)),
       UserInput.keyPress().subscribe(this.handleKeyPress(data.id))
     )
   }
