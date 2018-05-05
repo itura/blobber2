@@ -14,12 +14,17 @@
     "buildServer": "webpack --config config/webpack.config.server.js",
     "watchServer": "nodemon -w src/server/ -w src/shared/ --exec \"yarn buildServer; node dist/server.js\"",
     "build": "concurrently -n 'client,server' --kill-others-on-fail \"yarn buildClient\" \"yarn buildServer\"",
-    "dev": "concurrently -n 'server,client,linter' --kill-others-on-fail \"yarn watchServer\" \"yarn watchClient\" \"standard --parser babel-eslint\" "
+    "dev": "concurrently -n 'server,client,linter' --kill-others-on-fail \"yarn watchServer\" \"yarn watchClient\" \"standard --parser babel-eslint --env jasmine\"",
+    "test": "jest"
+  },
+  "jest": {
+    "rootDir": "./src"
   },
   "devDependencies": {
     "@types/jasmine": "^2.8.6",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.3",
+    "babel-jest": "^22.4.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.6.1",
@@ -28,8 +33,10 @@
     "concurrently": "^3.5.1",
     "css-loader": "^0.28.11",
     "html-webpack-plugin": "^3.2.0",
+    "jest": "^22.4.3",
     "nodemon": "^1.17.3",
     "path": "^0.12.7",
+    "regenerator-runtime": "^0.11.1",
     "standard": "^11.0.1",
     "style-loader": "^0.21.0",
     "webpack": "^4.6.0",
