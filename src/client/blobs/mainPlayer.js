@@ -43,7 +43,7 @@ export class MainPlayer extends Component {
         .subscribe(this.move),
       UserInput.mouseMove$.subscribe(this.mouseHandle(data.id)),
       UserInput.mouseDown$.subscribe(this.clickHandle(data.id)),
-      UserInput.movement().subscribe(this.handleKeyPress(data.id))
+      UserInput.movement$.subscribe(this.handleKeyPress(data.id))
     )
   }
   // User Input Handlers

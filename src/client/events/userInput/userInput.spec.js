@@ -31,7 +31,7 @@ describe('UserInput', () => {
 
   describe('#movement', () => {
     it('emits the current KeyCombo', done => {
-      UserInput.movement().subscribe(
+      UserInput.movement$.subscribe(
         value => {
           expect(value).toEqual(KeyCombo(Keys.A))
           done()
@@ -46,7 +46,7 @@ describe('UserInput', () => {
       describe('adding keys', () => {
         it('keydown events add keys', done => {
           const results = []
-          UserInput.movement().subscribe(
+          UserInput.movement$.subscribe(
             value => results.push(value),
             done.fail
           )
@@ -64,7 +64,7 @@ describe('UserInput', () => {
 
         it('duplicate keydown events are ignored ', done => {
           const results = []
-          UserInput.movement().subscribe(
+          UserInput.movement$.subscribe(
             value => results.push(value),
             done.fail
           )
@@ -85,7 +85,7 @@ describe('UserInput', () => {
       describe('removing keys', () => {
         it('keyup events remove keys', done => {
           const results = []
-          UserInput.movement().subscribe(
+          UserInput.movement$.subscribe(
             value => results.push(value),
             done.fail
           )
@@ -108,7 +108,7 @@ describe('UserInput', () => {
 
       it('only includes W, A, S, and D keys', done => {
         const results = []
-        UserInput.movement().subscribe(
+        UserInput.movement$.subscribe(
           value => results.push(value),
           done.fail
         )
@@ -132,7 +132,7 @@ describe('UserInput', () => {
   describe('locking', () => {
     it('stops emitting events when the user begins typing', done => {
       const results = []
-      UserInput.movement().subscribe(
+      UserInput.movement$.subscribe(
         value => results.push(value),
         done.fail
       )
@@ -151,13 +151,14 @@ describe('UserInput', () => {
 
     it('resumes emitting events when the user stops typing', done => {
       const results = []
-      UserInput.movement().subscribe(
+      UserInput.movement$.subscribe(
         value => results.push(value),
         done.fail
       )
 
       press(Keys.A)
       press(Keys.ENTER)
+      press(Keys.W)
       press(Keys.ENTER)
       press(Keys.W)
 
