@@ -15,7 +15,7 @@
     "watchServer": "nodemon -w src/server/ -w src/shared/ --exec \"yarn buildServer; node dist/server.js\"",
     "build": "concurrently -n 'client,server' --kill-others-on-fail \"yarn buildClient\" \"yarn buildServer\"",
     "dev": "concurrently -n 'server,client,linter' --kill-others-on-fail \"yarn watchServer\" \"yarn watchClient\" \"standard --parser babel-eslint --env jasmine\"",
-    "test": "jest"
+    "test": "jest --watch"
   },
   "jest": {
     "rootDir": "./src"

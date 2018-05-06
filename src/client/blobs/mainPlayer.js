@@ -43,13 +43,13 @@ export class MainPlayer extends Component {
         .subscribe(this.move),
       UserInput.mouseMove$.subscribe(this.mouseHandle(data.id)),
       UserInput.mouseDown$.subscribe(this.clickHandle(data.id)),
-      UserInput.keyPress().subscribe(this.handleKeyPress(data.id))
+      UserInput.movement().subscribe(this.handleKeyPress(data.id))
     )
   }
   // User Input Handlers
-  handleKeyPress = id => event => {
+  handleKeyPress = id => keyCombo => {
     const newDirection = createVector(0, 0)
-    event.keyCombo().forEach(keyCode => {
+    keyCombo.forEach(keyCode => {
       if (keyCode in Directions) {
         newDirection.x = newDirection.x + Directions[keyCode].x
         newDirection.y = newDirection.y + Directions[keyCode].y
