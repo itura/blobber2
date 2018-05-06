@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Directions, UserInput } from '../events/userInput'
+import { UserInput } from '../events/userInput'
+import { Directions } from '../events/userInput/keys'
 import { ServerEvents } from '../events/serverEvents'
 import { Blob } from './blob'
 import { round } from '../../shared/util'
