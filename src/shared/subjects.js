@@ -1,6 +1,5 @@
 import { BehaviorSubject } from 'rxjs/BehaviorSubject'
-import { Subject } from 'rxjs/Subject'
-import { filter, map, withLatestFrom } from 'rxjs/operators'
+import { filter } from 'rxjs/operators'
 
 export function LockedSubject () {
   let locked = false
@@ -13,54 +12,39 @@ export function LockedSubject () {
         return false
       }
 
+      locked = true
       this.next(true)
 
-      const unlock = () => {
-        locked = false
-        this.next(false)
-      }
-
-      return createKey(unlock)
-    },
-
-    observer () {
-      let key$ = null
-
-      return {
-        next: () => {
-          if (key$) {
-            key$.next()
-            key$ = null
-          } else {
-            key$ = this.lock()
-          }
+      let used = false
+      return () => {
+        if (!used) {
+          used = true
+          locked = false
+          this.next(false)
         }
       }
     }
   })
 }
 
-function createKey (finish) {
-  const key$ = new Subject()
+export function lockAdapter (lockedSubject$) {
+  let key = null
 
-  key$.subscribe({
-    next: finish,
-    complete: finish,
-    error: finish
-  })
-
-  return key$
+  return {
+    next: () => {
+      if (key) {
+        key()
+        key = null
+      } else {
+        key = lockedSubject$.lock()
+      }
+    }
+  }
 }
-
-export const unless = locked$ => source$ => source$.pipe(
-  withLatestFrom(locked$),
-  filter(([event, locked]) => !locked),
-  map(([event, locked]) => event)
-)
 
 export function ToggleSubject (initial = true) {
   let enabled = initial
-  const enabled$ = new Subject()
+  const enabled$ = new BehaviorSubject(initial)
   const _next = enabled$.next
 
   return Object.assign(enabled$, {

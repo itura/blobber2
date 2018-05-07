@@ -130,50 +130,155 @@ describe('UserInput', () => {
   })
 
   describe('locking', () => {
-    it('stops emitting events when the user begins typing', done => {
-      const results = []
-      UserInput.movement$.subscribe(
-        value => results.push(value),
-        done.fail
-      )
+    describe('from typing', () => {
+      it('stops emitting events when the user begins typing', done => {
+        const results = []
+        UserInput.movement$.subscribe(
+          value => results.push(value),
+          done.fail
+        )
 
-      press(Keys.A)
-      press(Keys.ENTER)
-      press(Keys.W)
+        press(Keys.A)
+        press(Keys.ENTER)
+        press(Keys.W)
 
-      expect(results).toEqual([
-        KeyCombo(Keys.A),
-        KeyCombo()
-      ])
+        expect(results).toEqual([
+          KeyCombo(Keys.A),
+          KeyCombo()
+        ])
 
-      done()
+        done()
+      })
+
+      it('resumes emitting events when the user stops typing', done => {
+        const results = []
+        UserInput.movement$.subscribe(
+          value => results.push(value),
+          done.fail
+        )
+
+        press(Keys.A)
+        press(Keys.ENTER)
+        press(Keys.W)
+        press(Keys.ENTER)
+        press(Keys.W)
+
+        expect(results).toEqual([
+          KeyCombo(Keys.A),
+          KeyCombo(),
+          KeyCombo(Keys.W),
+          KeyCombo()
+        ])
+
+        done()
+      })
     })
 
-    it('resumes emitting events when the user stops typing', done => {
-      const results = []
-      UserInput.movement$.subscribe(
-        value => results.push(value),
-        done.fail
-      )
+    describe('from manual lock', () => {
+      it('stops emitting events when the manual lock is engaged', done => {
+        const results = []
+        UserInput.movement$.subscribe(
+          value => results.push(value),
+          done.fail
+        )
 
-      press(Keys.A)
-      press(Keys.ENTER)
-      press(Keys.W)
-      press(Keys.ENTER)
-      press(Keys.W)
+        press(Keys.A)
+        UserInput.lock()
+        press(Keys.W)
 
-      expect(results).toEqual([
-        KeyCombo(Keys.A),
-        KeyCombo(),
-        KeyCombo(Keys.W),
-        KeyCombo()
-      ])
+        expect(results).toEqual([
+          KeyCombo(Keys.A),
+          KeyCombo()
+        ])
 
-      done()
+        done()
+      })
+
+      it('resumes emitting events when the manual lock is released', done => {
+        const results = []
+        UserInput.movement$.subscribe(
+          value => results.push(value),
+          done.fail
+        )
+
+        press(Keys.A)
+        const key = UserInput.lock()
+        press(Keys.W)
+        key()
+        press(Keys.W)
+
+        expect(results).toEqual([
+          KeyCombo(Keys.A),
+          KeyCombo(),
+          KeyCombo(Keys.W),
+          KeyCombo()
+        ])
+
+        done()
+      })
+
+      it('returns false when the lock is already engaged', done => {
+        const results = []
+        UserInput.movement$.subscribe(
+          value => results.push(value),
+          done.fail
+        )
+
+        press(Keys.A)
+        UserInput.lock()
+        expect(UserInput.lock()).toEqual(false)
+        press(Keys.W)
+
+        expect(results).toEqual([
+          KeyCombo(Keys.A),
+          KeyCombo()
+        ])
+
+        done()
+      })
+
+      it('does not honor keys that have already been used', done => {
+        const results = []
+        UserInput.movement$.subscribe(
+          value => results.push(value),
+          done.fail
+        )
+
+        press(Keys.A)
+        const key = UserInput.lock()
+        press(Keys.W)
+        key()
+        press(Keys.W)
+        UserInput.lock()
+        press(Keys.W)
+        key()
+        press(Keys.W)
+
+        expect(results).toEqual([
+          KeyCombo(Keys.A),
+          KeyCombo(),
+          KeyCombo(Keys.W),
+          KeyCombo()
+        ])
+
+        done()
+      })
     })
   })
 
   describe('#isTyping', () => {
+    it('emits false upon initial subscription', done => {
+      const results = []
+      UserInput.isTyping$.subscribe(
+        value => results.push(value),
+        done.fail
+      )
+
+      expect(results).toEqual([false])
+
+      done()
+    })
+
     it('emits true when the enter key is pressed the first time', done => {
       const results = []
       UserInput.isTyping$.subscribe(
@@ -184,7 +289,7 @@ describe('UserInput', () => {
       WindowSources.keyDown$.next(windowEventFor(Keys.ENTER))
       WindowSources.keyUp$.next(windowEventFor(Keys.ENTER))
 
-      expect(results).toEqual([true])
+      expect(results).toEqual([false, true])
 
       done()
     })
@@ -201,7 +306,7 @@ describe('UserInput', () => {
       WindowSources.keyDown$.next(windowEventFor(Keys.ENTER))
       WindowSources.keyUp$.next(windowEventFor(Keys.ENTER))
 
-      expect(results).toEqual([true, false])
+      expect(results).toEqual([false, true, false])
 
       done()
     })
@@ -219,7 +324,7 @@ describe('UserInput', () => {
         WindowSources.keyDown$.next(windowEventFor(Keys.ENTER))
         WindowSources.keyUp$.next(windowEventFor(Keys.ENTER))
 
-        expect(results).toEqual([true, false])
+        expect(results).toEqual([false, true, false])
 
         done()
       })

@@ -1,5 +1,4 @@
 import { filter, map, share, tap } from 'rxjs/operators'
-import { LockedSubject } from '../../../shared/subjects'
 import { merge } from 'rxjs/observable/merge'
 import { KeyCombo } from './keys'
 import { unless } from '../../../shared/operators'
@@ -11,20 +10,21 @@ import { Subscription } from 'rxjs'
  * Represents the currently held-down keys of the given keys. The stream will
  * emit an event containing the current KeyCombo whenever it changes.
  *
- * The KeyComboStream can be 'locked' by the given lock streams, which
- * emit true or false values. When the latest emission from any of the
- * lock streams is true, the KeyComboStream will be locked and no events
- * will be emitted. Once the latest emission from all of the lock streams
- * is false again, the KeyComboStream will resume emitting events.
+ * The KeyComboStream can be 'locked' by the given lock stream, which
+ * emits true or false values, and emits its current value upon subscription.
+ *
+ * When the latest emission from the lock stream is true, the KeyComboStream
+ * will be locked and no events will be emitted. Once the latest emission from
+ * the lock stream is false again, the KeyComboStream will resume emitting events.
  *
  * @param {Array<number>} keys - The key codes to listen for
  * @param {Observable} blur$ - window blur event stream
  * @param {Observable} keyDown$ - window keydown event stream
  * @param {Observable} keyUp$ - window keyup event stream
- * @param {Array<Observable>} locks - true/false streams that can lock this stream
+ * @param {Observable} isLocked$ - true/false stream that can lock this stream
  * @returns Observable
  */
-export function KeyComboStream (keys, blur$, keyDown$, keyUp$, locks) {
+export function KeyComboStream (keys, blur$, keyDown$, keyUp$, isLocked$) {
   return new Observable(observer => {
     let currentKeyCombo = KeyCombo()
     const subscription = new Subscription()
@@ -71,17 +71,11 @@ export function KeyComboStream (keys, blur$, keyDown$, keyUp$, locks) {
     }))
 
     //
-    // Set up stream for locking event emission
-    //
-
-    const isLocked$ = LockedSubject()
-    locks.forEach(lock => subscription.add(lock.subscribe(isLocked$.observer())))
-
-    //
     // Cross the streams D:
     //
 
-    subscription.add(merge(_keyDown$, _keyUp$).pipe(unless(isLocked$)).subscribe(observer))
+    const keyComboStream = merge(_keyDown$, _keyUp$).pipe(unless(isLocked$))
+    subscription.add(keyComboStream.subscribe(observer))
 
     return subscription
   })

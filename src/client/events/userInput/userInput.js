@@ -1,17 +1,20 @@
 import { createVector } from '../../../shared/vector'
 import { filter, map, sampleTime } from 'rxjs/operators'
-import { ToggleSubject } from '../../../shared/subjects'
+import { merge } from 'rxjs/observable/merge'
+import { LockedSubject, ToggleSubject } from '../../../shared/subjects'
 import { Keys } from './keys'
 import { KeyComboStream } from './keyComboStream'
 
 export function createUserInput (WindowSources) {
   const isTyping$ = ToggleSubject(false)
+  const isLocked$ = LockedSubject(false)
+  const isMovementEnabled$ = merge(isTyping$, isLocked$)
   const movement$ = KeyComboStream(
     [Keys.W, Keys.A, Keys.S, Keys.D],
     WindowSources.blur$,
     WindowSources.keyDown$,
     WindowSources.keyUp$,
-    [isTyping$])
+    isMovementEnabled$)
 
   WindowSources.keyDown$
     .pipe(filter(event => event.keyCode === Keys.ENTER))
@@ -28,6 +31,10 @@ export function createUserInput (WindowSources) {
     isTyping$: isTyping$,
     mouseMove$: mouseMove$,
     mouseDown$: mouseDown$,
-    movement$: movement$
+    movement$: movement$,
+
+    lock () {
+      return isLocked$.lock()
+    }
   }
 }
