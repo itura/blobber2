@@ -21,10 +21,10 @@ import { Subscription } from 'rxjs'
  * @param {Observable} blur$ - window blur event stream
  * @param {Observable} keyDown$ - window keydown event stream
  * @param {Observable} keyUp$ - window keyup event stream
- * @param {Observable} isLocked$ - true/false stream that can lock this stream
- * @returns Observable
+ * @param {Observable<boolean>} isDisabled$ - true/false stream that disables event emission when true
+ * @returns {Observable<KeyCombo>} Emits the current KeyCombo
  */
-export function KeyComboStream (keys, blur$, keyDown$, keyUp$, isLocked$) {
+export function KeyComboStream (keys, blur$, keyDown$, keyUp$, isDisabled$) {
   return new Observable(observer => {
     let currentKeyCombo = KeyCombo()
     const subscription = new Subscription()
@@ -34,9 +34,7 @@ export function KeyComboStream (keys, blur$, keyDown$, keyUp$, isLocked$) {
       currentKeyCombo = currentKeyCombo.clear()
     }))
 
-    //
     // Set up stream for keydown events
-    //
 
     const addKeyIfRelevant = source$ => source$.pipe(
       filter(event => keys.includes(event.keyCode)),
@@ -52,9 +50,7 @@ export function KeyComboStream (keys, blur$, keyDown$, keyUp$, isLocked$) {
       currentKeyCombo = newKeyCombo
     }))
 
-    //
     // Set up stream for keyup events
-    //
 
     const removeKeyIfRelevant = source$ => source$.pipe(
       filter(event => keys.includes(event.keyCode)),
@@ -70,11 +66,9 @@ export function KeyComboStream (keys, blur$, keyDown$, keyUp$, isLocked$) {
       currentKeyCombo = newKeyCombo
     }))
 
-    //
     // Cross the streams D:
-    //
 
-    const keyComboStream = merge(_keyDown$, _keyUp$).pipe(unless(isLocked$))
+    const keyComboStream = merge(_keyDown$, _keyUp$).pipe(unless(isDisabled$))
     subscription.add(keyComboStream.subscribe(observer))
 
     return subscription

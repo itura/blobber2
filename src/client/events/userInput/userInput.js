@@ -8,13 +8,13 @@ import { KeyComboStream } from './keyComboStream'
 export function createUserInput (WindowSources) {
   const isTyping$ = ToggleSubject(false)
   const isLocked$ = LockedSubject(false)
-  const isMovementEnabled$ = merge(isTyping$, isLocked$)
+  const isDisabled$ = merge(isTyping$, isLocked$)
   const movement$ = KeyComboStream(
     [Keys.W, Keys.A, Keys.S, Keys.D],
     WindowSources.blur$,
     WindowSources.keyDown$,
     WindowSources.keyUp$,
-    isMovementEnabled$)
+    isDisabled$)
 
   WindowSources.keyDown$
     .pipe(filter(event => event.keyCode === Keys.ENTER))

@@ -27,21 +27,6 @@ export function LockedSubject () {
   })
 }
 
-export function lockAdapter (lockedSubject$) {
-  let key = null
-
-  return {
-    next: () => {
-      if (key) {
-        key()
-        key = null
-      } else {
-        key = lockedSubject$.lock()
-      }
-    }
-  }
-}
-
 export function ToggleSubject (initial = true) {
   let enabled = initial
   const enabled$ = new BehaviorSubject(initial)
