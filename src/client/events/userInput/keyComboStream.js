@@ -2,7 +2,7 @@ import { filter, map, share, tap } from 'rxjs/operators'
 import { merge } from 'rxjs/observable/merge'
 import { KeyCombo } from './keys'
 import { unless } from '../../../shared/operators'
-import { Observable } from 'rxjs/observable'
+import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs'
 
 /**
@@ -14,8 +14,8 @@ import { Subscription } from 'rxjs'
  * emits true or false values, and emits its current value upon subscription.
  *
  * When the latest emission from the lock stream is true, the KeyComboStream
- * will be locked and no events will be emitted. Once the latest emission from
- * the lock stream is false again, the KeyComboStream will resume emitting events.
+ * will be locked and no events will be emitted. When the latest emission from
+ * the lock stream is false, the KeyComboStream will emit events.
  *
  * @param {Array<number>} keys - The key codes to listen for
  * @param {Observable} blur$ - window blur event stream
@@ -55,8 +55,7 @@ export function KeyComboStream (keys, blur$, keyDown$, keyUp$, isDisabled$) {
     const removeKeyIfRelevant = source$ => source$.pipe(
       filter(event => keys.includes(event.keyCode)),
       map(event => currentKeyCombo.remove(event.keyCode)),
-      tap(newKeyCombo => { currentKeyCombo = newKeyCombo })
-    )
+      tap(newKeyCombo => { currentKeyCombo = newKeyCombo }))
 
     const _keyUp$ = keyUp$.pipe(
       removeKeyIfRelevant,
