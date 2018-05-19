@@ -15,7 +15,7 @@ app.use(Express.static('public'))
 const server = Server(app)
 const io = SocketIo(server)
 
-export function init (log) {
+export function init (log, db) {
 // Establish update loop
   const digest = createDigest(io.sockets)
   timer(0, 15).subscribe(() => {
@@ -26,7 +26,7 @@ export function init (log) {
   // timer(0, 2000).subscribe(() => console.log(BlobsRepository.all()))
 
   // Set up handlers to consume events from the bus and update the digest
-  eventHandlerSetups.forEach(setup => setup(eventBus, digest))
+  eventHandlerSetups.forEach(setup => setup(eventBus, digest, db))
 
   // We will process these events when a client sends them
   const clientEvents = ['ud', 'ch']

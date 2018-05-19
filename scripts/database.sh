@@ -44,7 +44,7 @@ if [ ! "$(docker ps -a -q -f name=blobber2)" ]; then
     echo "* Pulling postgres:10.4"
     docker pull $PG_IMAGE_NAME
 
-    echo "* Starting blobber2 postgres"
+    echo "* Creating blobber2 postgres"
     docker run \
         --name $CONTAINER_NAME \
         -p 5432:5432 \
