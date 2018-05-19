@@ -15,7 +15,9 @@ CONTAINER_NAME=blobber2-pg
 PG_IMAGE_NAME=postgres:10.4
 
 if [ "$1" == "shell" ]; then
-    docker run -it --rm --link $CONTAINER_NAME:postgres postgres psql -h postgres -U blobber
+    docker run \
+    -it --rm \
+    --link $CONTAINER_NAME:postgres postgres psql -h postgres -U blobber
     exit 0
 fi
 
