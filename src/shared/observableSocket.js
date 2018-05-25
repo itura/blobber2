@@ -1,5 +1,5 @@
-import { Subject } from 'rxjs/Subject'
 import { filter, map } from 'rxjs/operators'
+import { Observable } from 'rxjs/Observable'
 
 export function createObservableSocket (socket, ...config) {
   let eventTypes = null
@@ -12,14 +12,19 @@ export function createObservableSocket (socket, ...config) {
     operators = config[0].operators || []
   }
 
-  const source$ = new Subject()
-  eventTypes.forEach(type => {
-    socket.on(type, data => source$.next({type, data}))
-  })
+  const source$ = new Observable(observer => {
+    eventTypes.forEach(type => {
+      socket.on(type, data => observer.next({type, data}))
+    })
 
-  socket.on('error', data => {
-    console.log('error!', data)
-    socket.close()
+    socket.on('error', data => {
+      observer.error(data)
+      socket.close()
+    })
+
+    return () => {
+      socket.close()
+    }
   })
 
   const match = type => source => source.pipe(

@@ -310,24 +310,5 @@ describe('UserInput', () => {
 
       done()
     })
-
-    describe('#subscribeWith', () => {
-      it('allows you to subscribe to streams that emit when user is and is not typing respectively', done => {
-        const results = []
-        UserInput.isTyping$.subscribeWith(
-          () => results.push(true),
-          () => results.push(false)
-        )
-
-        WindowSources.keyDown$.next(windowEventFor(Keys.ENTER))
-        WindowSources.keyUp$.next(windowEventFor(Keys.ENTER))
-        WindowSources.keyDown$.next(windowEventFor(Keys.ENTER))
-        WindowSources.keyUp$.next(windowEventFor(Keys.ENTER))
-
-        expect(results).toEqual([false, true, false])
-
-        done()
-      })
-    })
   })
 })

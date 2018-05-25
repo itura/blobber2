@@ -3,6 +3,7 @@ import { ServerEvents } from '../events/serverEvents'
 import { Messages } from './messages'
 import { UserInput } from '../events/userInput'
 import { Events } from '../../shared/events'
+import { when } from '../../shared/operators'
 
 const containerStyle = {
   position: 'fixed',
@@ -70,7 +71,8 @@ export class Chat extends Component {
     }))
 
     this.subs.push(
-      ...UserInput.isTyping$.subscribeWith(this.startTyping, this.submit)
+      UserInput.isTyping$.pipe(when(true)).subscribe(this.startTyping),
+      UserInput.isTyping$.pipe(when(false)).subscribe(this.submit)
     )
   }
 

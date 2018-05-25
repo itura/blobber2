@@ -5,3 +5,7 @@ export const unless = locked$ => source$ => source$.pipe(
   filter(([event, locked]) => !locked),
   map(([event, locked]) => event)
 )
+
+export const when = enabled => toggle$ => toggle$.pipe(
+  filter(value => value === enabled)
+)
