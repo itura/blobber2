@@ -15,7 +15,7 @@ app.use(Express.static('public'))
 const server = Server(app)
 const io = SocketIo(server)
 
-export function init (log, db) {
+export function createServer (log, db) {
 // Establish update loop
   const digest = createDigest(io.sockets)
   timer(0, 15).subscribe(() => {

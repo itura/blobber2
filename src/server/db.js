@@ -1,9 +1,11 @@
 import { Sequelize } from 'sequelize'
+import { fromPromise } from 'rxjs/observable/fromPromise'
+import { combineLatest } from 'rxjs/observable/combineLatest'
 
 export function createDb (url) {
   const db = new Sequelize(url)
 
-  const Boop = db.define('Boop', {
+  const _Boop = db.define('Boop', {
     name: {
       type: Sequelize.STRING
     }
@@ -25,5 +27,10 @@ export function createDb (url) {
     }
   })
 
-  return {Boop}
+  const Boop$ = fromPromise(_Boop.sync())
+
+  return combineLatest(Boop$,
+    (Boop) => {
+      return {Boop}
+    })
 }

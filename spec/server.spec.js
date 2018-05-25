@@ -1,6 +1,6 @@
 /* eslint-env jasmine */
-
-import { init } from '../src/server/server'
+// TODO rewrite in jest
+import { createServer } from '../src/server/server'
 import openSocket from 'socket.io-client'
 import { Observable, Subject } from 'rxjs'
 
@@ -17,7 +17,7 @@ describe('server', () => {
   let serverInstance, client1, client2
 
   beforeAll(() => {
-    const server = init(() => null)
+    const server = createServer(() => null)
     serverInstance = server.listen(port)
   })
 

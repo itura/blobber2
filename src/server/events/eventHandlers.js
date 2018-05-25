@@ -51,8 +51,7 @@ const updateAll = (digest, db) => data => {
 const chat = (digest, db) => data => {
   if (data.content.includes('/boops:new')) {
     const name = data.content.split(' ')[1]
-    db.Boop.sync()
-      .then(() => db.Boop.create({name: name}))
+    db.Boop.create({name: name})
       .then(boop => digest.add(Events.CHAT.with({
         from: 'SERVER',
         content: 'Created boop'
